@@ -6,8 +6,7 @@ import NutritionMini from './NutritionMini';
 import Accordion from './Accordion';
 import './ProductDetail.css';
 
-const THUMBS = [
-  { emoji: '🍬', label: 'Principal' },
+const EXTRA_THUMBS = [
   { emoji: '📦', label: 'Pote' },
   { emoji: '💊', label: 'Detalhe' },
   { emoji: '🏋️', label: 'Uso' },
@@ -19,6 +18,11 @@ export default function ProductDetail({ onToast }) {
   const [qty, setQty] = useState(1);
   const [activeThumb, setActiveThumb] = useState(0);
   const [liked, setLiked] = useState(false);
+
+  function handleFlavorChange(f) {
+    setFlavor(f);
+    setActiveThumb(0);
+  }
 
   function handleAdd() {
     addItem({ id: `detail-${flavor.id}`, name: 'Whey Gummy', flavor: flavor.label, price: 149.9, qty });
@@ -32,18 +36,27 @@ export default function ProductDetail({ onToast }) {
           <div className="product-gallery">
             <div className="product-gallery__main">
               <div className="product-gallery__main-img">
-                <span style={{ fontSize: 120 }}>{THUMBS[activeThumb].emoji}</span>
-                <div style={{ color: 'var(--muted)', fontSize: 14, marginTop: 8 }}>
-                  {flavor.emoji} {flavor.label}
-                </div>
+                {activeThumb === 0 && flavor.img
+                  ? <img src={flavor.img} alt={flavor.label} className="product-gallery__img" />
+                  : <span style={{ fontSize: 120 }}>{EXTRA_THUMBS[activeThumb - 1]?.emoji ?? flavor.emoji}</span>
+                }
               </div>
             </div>
             <div className="product-gallery__thumbs">
-              {THUMBS.map((t, i) => (
+              <div
+                className={`thumb${activeThumb === 0 ? ' active' : ''}`}
+                onClick={() => setActiveThumb(0)}
+              >
+                {flavor.img
+                  ? <img src={flavor.img} alt={flavor.label} className="thumb__img" />
+                  : <span style={{ fontSize: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>{flavor.emoji}</span>
+                }
+              </div>
+              {EXTRA_THUMBS.map((t, i) => (
                 <div
                   key={i}
-                  className={`thumb${activeThumb === i ? ' active' : ''}`}
-                  onClick={() => setActiveThumb(i)}
+                  className={`thumb${activeThumb === i + 1 ? ' active' : ''}`}
+                  onClick={() => setActiveThumb(i + 1)}
                 >
                   <span style={{ fontSize: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
                     {t.emoji}
@@ -66,7 +79,7 @@ export default function ProductDetail({ onToast }) {
               <span style={{ marginLeft: 4, fontSize: 11, color: '#2ecc71', fontWeight: 600 }}>✓ Compra verificada</span>
             </div>
 
-            <FlavorPicker active={flavor} onChange={setFlavor} />
+            <FlavorPicker active={flavor} onChange={handleFlavorChange} />
 
             <div className="price-block">
               <div className="price-block__main">

@@ -1,8 +1,8 @@
 export const FLAVORS = [
-  { id: 'caramelo', label: 'Caramelo Salgado', emoji: '🍯', color: '#C8742F' },
-  { id: 'frutas',   label: 'Frutas Vermelhas', emoji: '🍓', color: '#C0392B' },
-  { id: 'morango',  label: 'Morango',          emoji: '🍓', color: '#E91E8C' },
-  { id: 'maca',     label: 'Maçã Verde',       emoji: '🍏', color: '#27AE60' },
+  { id: 'caramelo', label: 'Caramelo Salgado', emoji: '🍯', color: '#C8742F', img: '/produto-caramelo.png' },
+  { id: 'frutas',   label: 'Frutas Vermelhas', emoji: '🍓', color: '#C0392B', img: '/produto-frutas.png'   },
+  { id: 'morango',  label: 'Morango',          emoji: '🍓', color: '#E91E8C', img: '/produto-morango.png'  },
+  { id: 'maca',     label: 'Maçã Verde',       emoji: '🍏', color: '#27AE60', img: '/produto-maca.png'    },
 ];
 
 export const PRODUCTS = [
@@ -22,7 +22,7 @@ export const PRODUCTS = [
     reviews: 312,
     attrs: ['12g Proteína', 'Zero Glúten', 'Zero Açúcar'],
     installments: '3× de R$ 49,97',
-    img: null,
+    img: '/produto-caramelo.png',
   },
   {
     id: 'whey-gummy-frutas',
@@ -40,7 +40,7 @@ export const PRODUCTS = [
     reviews: 287,
     attrs: ['12g Proteína', 'Zero Glúten', 'Zero Açúcar'],
     installments: '3× de R$ 49,97',
-    img: null,
+    img: '/produto-frutas.png',
   },
   {
     id: 'whey-gummy-morango',
@@ -58,7 +58,7 @@ export const PRODUCTS = [
     reviews: 94,
     attrs: ['12g Proteína', 'Zero Glúten', 'Zero Açúcar'],
     installments: '3× de R$ 49,97',
-    img: null,
+    img: '/produto-morango.png',
   },
   {
     id: 'whey-gummy-maca',
@@ -76,7 +76,7 @@ export const PRODUCTS = [
     reviews: 61,
     attrs: ['12g Proteína', 'Zero Glúten', 'Zero Açúcar'],
     installments: '3× de R$ 49,97',
-    img: null,
+    img: '/produto-maca.png',
   },
 ];
 

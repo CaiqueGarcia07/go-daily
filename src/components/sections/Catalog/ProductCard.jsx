@@ -36,9 +36,10 @@ export default function ProductCard({ product, onToast, delay }) {
       </button>
 
       <div className="prod-card__img-wrap">
-        <div className="prod-card__img-placeholder">
-          <span>{product.flavorEmoji}</span>
-        </div>
+        {product.img
+          ? <img src={product.img} alt={product.flavor} className="prod-card__img" />
+          : <div className="prod-card__img-placeholder"><span>{product.flavorEmoji}</span></div>
+        }
       </div>
 
       <div className="prod-card__body">
