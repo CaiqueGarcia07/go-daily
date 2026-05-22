@@ -10,7 +10,7 @@ export default function MobileNav({ open, onClose }) {
       <nav className={`mobile-nav${open ? ' open' : ''}`}>
         <div className="mobile-nav__header">
           <a href="#" className="header-logo" onClick={onClose}>
-            Go!Daily
+            <img src="/logo.svg" alt="Go!Daily" className="header-logo__img" />
           </a>
           <button className="mobile-nav__close" onClick={onClose}>
             ×

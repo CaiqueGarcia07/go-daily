@@ -7,7 +7,9 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div className="footer-brand">
-            <a href="#" className="footer-logo">Go!Daily</a>
+            <a href="#" className="footer-logo">
+              <img src="/logo.svg" alt="Go!Daily" className="footer-logo__img" />
+            </a>
             <p className="footer-tagline">
               Nutrição esportiva que cabe no seu bolso e na sua rotina.
             </p>

@@ -22,14 +22,18 @@
 .footer-logo {
   display: inline-flex;
   align-items: center;
-  background: var(--yellow);
-  color: var(--bg);
-  font-size: 18px;
-  font-weight: 900;
-  padding: 8px 16px;
-  border-radius: var(--radius-xs);
   width: fit-content;
-  letter-spacing: -0.02em;
+  transition: opacity var(--transition);
+}
+
+.footer-logo:hover {
+  opacity: 0.75;
+}
+
+.footer-logo__img {
+  height: 48px;
+  width: auto;
+  display: block;
 }
 
 .footer-tagline {

@@ -1,8 +1,8 @@
 export const FLAVORS = [
-  { id: 'caramelo', label: 'Caramelo Salgado', emoji: '🍯', color: '#C8742F', img: '/produto-caramelo.png' },
-  { id: 'frutas',   label: 'Frutas Vermelhas', emoji: '🍓', color: '#C0392B', img: '/produto-frutas.png'   },
-  { id: 'morango',  label: 'Morango',          emoji: '🍓', color: '#E91E8C', img: '/produto-morango.png'  },
-  { id: 'maca',     label: 'Maçã Verde',       emoji: '🍏', color: '#27AE60', img: '/produto-maca.png'    },
+  { id: 'caramelo', label: 'Caramelo Salgado', emoji: '🍯', color: '#C8742F', img: '/gummy_whey(caramelo_salgado)4.png' },
+  { id: 'frutas',   label: 'Frutas Vermelhas', emoji: '🍓', color: '#C0392B', img: '/gummy_whey(frutas_vermelhas)1.png'  },
+  { id: 'morango',  label: 'Morango',          emoji: '🍓', color: '#E91E8C', img: '/gummy_whey(morango)1.png'           },
+  { id: 'maca',     label: 'Maçã Verde',       emoji: '🍏', color: '#27AE60', img: '/gummy_whey(maca_verde)1.png'       },
 ];
 
 export const PRODUCTS = [
@@ -22,7 +22,7 @@ export const PRODUCTS = [
     reviews: 312,
     attrs: ['12g Proteína', 'Zero Glúten', 'Zero Açúcar'],
     installments: '3× de R$ 49,97',
-    img: '/produto-caramelo.png',
+    img: '/gummy_whey(caramelo_salgado)4.png',
   },
   {
     id: 'whey-gummy-frutas',
@@ -40,7 +40,7 @@ export const PRODUCTS = [
     reviews: 287,
     attrs: ['12g Proteína', 'Zero Glúten', 'Zero Açúcar'],
     installments: '3× de R$ 49,97',
-    img: '/produto-frutas.png',
+    img: '/gummy_whey(frutas_vermelhas)1.png',
   },
   {
     id: 'whey-gummy-morango',
@@ -58,7 +58,7 @@ export const PRODUCTS = [
     reviews: 94,
     attrs: ['12g Proteína', 'Zero Glúten', 'Zero Açúcar'],
     installments: '3× de R$ 49,97',
-    img: '/produto-morango.png',
+    img: '/gummy_whey(morango)1.png',
   },
   {
     id: 'whey-gummy-maca',
@@ -76,7 +76,7 @@ export const PRODUCTS = [
     reviews: 61,
     attrs: ['12g Proteína', 'Zero Glúten', 'Zero Açúcar'],
     installments: '3× de R$ 49,97',
-    img: '/produto-maca.png',
+    img: '/gummy_whey(maca_verde)1.png',
   },
 ];
 

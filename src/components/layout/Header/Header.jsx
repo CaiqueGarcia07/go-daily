@@ -10,7 +10,9 @@ export default function Header({ onCartOpen, onMobileNavOpen }) {
   return (
     <header className="site-header" id="siteHeader">
       <div className="container header-inner">
-        <a href="#" className="header-logo">Go!Daily</a>
+        <a href="#" className="header-logo">
+          <img src="/logo.svg" alt="Go!Daily" className="header-logo__img" />
+        </a>
 
         <nav className="header-nav">
           <a href="#" className="nav-link active">Home</a>

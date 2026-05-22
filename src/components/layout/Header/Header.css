@@ -18,20 +18,19 @@
 .header-logo {
   display: inline-flex;
   align-items: center;
-  background: var(--yellow);
-  color: var(--bg);
-  font-size: 20px;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  padding: 9px 18px;
-  border-radius: var(--radius-xs);
   flex-shrink: 0;
-  transition: transform var(--transition), box-shadow var(--transition);
+  transition: transform var(--transition), opacity var(--transition);
 }
 
 .header-logo:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(255, 226, 34, 0.35);
+  opacity: 0.82;
+}
+
+.header-logo__img {
+  height: 42px;
+  width: auto;
+  display: block;
 }
 
 .header-nav {
@@ -166,7 +165,7 @@
 /* ── MOBILE */
 @media (max-width: 768px) {
   .header-inner { height: 64px; gap: 12px; }
-  .header-logo { font-size: 17px; padding: 8px 14px; }
+  .header-logo__img { height: 34px; }
   .header-actions { gap: 2px; }
   .search-bar { padding: 14px 20px; }
 
