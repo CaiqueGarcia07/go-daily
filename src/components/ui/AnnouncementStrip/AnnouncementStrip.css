@@ -1,0 +1,48 @@
+.strip {
+  background: var(--yellow);
+  color: var(--bg);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 0;
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.strip-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+
+.strip:hover .strip-track {
+  animation-play-state: paused;
+}
+
+.strip-item {
+  padding: 0 48px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  white-space: nowrap;
+}
+
+.strip-dot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(22, 18, 21, 0.35);
+  flex-shrink: 0;
+  vertical-align: middle;
+  margin: 0 0 0 24px;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@media (max-width: 768px) {
+  .strip { font-size: 12px; }
+}

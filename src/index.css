@@ -1,0 +1,295 @@
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap');
+
+/* ═══ DESIGN TOKENS — Go!Daily Brand System ═══ */
+:root {
+  --bg: #161215;
+  --surface: #1e1a1d;
+  --surface2: #252025;
+  --surface3: #2e2830;
+  --brown: #7a3e1d;
+  --orange: #e6a15a;
+  --ocre: #c8742f;
+  --yellow: #ffe222;
+  --white: #f5f2ec;
+  --muted: rgba(245, 242, 236, 0.45);
+  --muted2: rgba(245, 242, 236, 0.2);
+  --border: rgba(200, 116, 47, 0.25);
+  --border-y: rgba(255, 226, 34, 0.2);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --radius-xs: 6px;
+  --radius-pill: 100px;
+  --transition: 0.18s ease;
+  --shadow-card: 0 20px 56px rgba(0, 0, 0, 0.45);
+  --shadow-btn: 0 10px 32px rgba(255, 226, 34, 0.35);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Satoshi', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+}
+
+#root {
+  width: 100%;
+  margin: 0;
+  text-align: left;
+  border: none;
+  min-height: 100svh;
+  display: block;
+}
+
+.container {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 64px;
+}
+
+.section {
+  padding: 96px 0;
+}
+
+.section--dark {
+  background: var(--surface);
+}
+
+.section--darker {
+  background: var(--surface2);
+}
+
+/* TYPOGRAPHY */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.eyebrow--yellow {
+  color: var(--yellow);
+}
+
+.section-title {
+  font-size: clamp(28px, 3vw, 38px);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+.section-title em {
+  font-style: normal;
+  color: var(--yellow);
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 52px;
+  gap: 24px;
+}
+
+.section-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* BUTTONS */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition),
+    background var(--transition);
+  font-family: inherit;
+}
+
+.btn--primary {
+  background: var(--yellow);
+  color: var(--bg);
+}
+
+.btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-btn);
+}
+
+.btn--secondary {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid var(--muted2);
+}
+
+.btn--secondary:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+.btn--outline {
+  background: transparent;
+  color: var(--yellow);
+  border: 1px solid var(--yellow);
+}
+
+.btn--outline:hover {
+  background: rgba(255, 226, 34, 0.08);
+}
+
+.btn--ghost {
+  background: rgba(255, 226, 34, 0.07);
+  color: var(--yellow);
+  border: 1px solid rgba(255, 226, 34, 0.25);
+}
+
+.btn--ghost:hover {
+  background: var(--yellow);
+  color: var(--bg);
+}
+
+.btn--lg {
+  font-size: 16px;
+  padding: 16px 36px;
+}
+
+.btn--sm {
+  font-size: 12px;
+  padding: 8px 16px;
+}
+
+.btn--full {
+  width: 100%;
+}
+
+.btn--icon {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--white);
+  font-size: 18px;
+}
+
+.btn--icon:hover {
+  border-color: var(--yellow);
+}
+
+/* BADGES */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.badge--yellow {
+  background: var(--yellow);
+  color: var(--bg);
+}
+
+.badge--orange {
+  background: rgba(122, 62, 29, 0.3);
+  border: 1px solid rgba(200, 116, 47, 0.4);
+  color: var(--orange);
+}
+
+.badge--accent {
+  background: rgba(255, 226, 34, 0.1);
+  border: 1px solid rgba(255, 226, 34, 0.35);
+  color: var(--yellow);
+}
+
+.attr-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 13px;
+  border-radius: var(--radius-pill);
+  background: rgba(122, 62, 29, 0.25);
+  border: 1px solid rgba(200, 116, 47, 0.4);
+  color: var(--orange);
+}
+
+/* STARS */
+.stars {
+  color: var(--yellow);
+  letter-spacing: -1px;
+}
+
+/* ANIMATIONS */
+[data-animate] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+[data-animate].visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+[data-delay='1'] { transition-delay: 0.1s; }
+[data-delay='2'] { transition-delay: 0.2s; }
+[data-delay='3'] { transition-delay: 0.3s; }
+[data-delay='4'] { transition-delay: 0.4s; }
+[data-delay='5'] { transition-delay: 0.5s; }
+
+/* ── TABLET (≤1024px) */
+@media (max-width: 1024px) {
+  .container { padding: 0 32px; }
+  .section-header { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 36px; }
+}
+
+/* ── MOBILE (≤768px) */
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .section { padding: 64px 0; }
+  .section-title { font-size: clamp(24px, 6vw, 32px); }
+}

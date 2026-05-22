@@ -1,0 +1,121 @@
+.promo-banner {
+  background: var(--brown);
+  position: relative;
+  overflow: hidden;
+  padding: 80px 64px;
+}
+
+.promo-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, rgba(122, 62, 29, 1) 0%, rgba(200, 116, 47, 0.55) 100%);
+}
+
+.promo-banner::after {
+  content: '';
+  position: absolute;
+  right: -100px;
+  top: -100px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(ellipse, rgba(255, 226, 34, 0.15) 0%, transparent 65%);
+}
+
+.promo-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1320px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+.promo-left {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.promo-tag {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+
+.promo-title {
+  font-size: clamp(36px, 4vw, 58px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #fff;
+}
+
+.promo-sub {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 420px;
+  line-height: 1.65;
+}
+
+.promo-flavor-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.promo-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  transition: transform var(--transition);
+  cursor: pointer;
+}
+
+.promo-dot:hover {
+  transform: scale(1.3);
+}
+
+.promo-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.promo-price {
+  font-size: 52px;
+  font-weight: 900;
+  color: var(--yellow);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.promo-price small {
+  font-size: 18px;
+  font-weight: 500;
+  color: rgba(255, 226, 34, 0.65);
+}
+
+.promo-saving {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ── TABLET */
+@media (max-width: 1024px) {
+  .promo-inner { flex-direction: column; gap: 32px; }
+  .promo-right { align-items: flex-start; }
+}
+
+/* ── MOBILE */
+@media (max-width: 768px) {
+  .promo-banner { padding: 56px 20px; }
+  .promo-title { font-size: 36px; }
+  .promo-price { font-size: 38px; }
+}

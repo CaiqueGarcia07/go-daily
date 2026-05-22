@@ -1,0 +1,55 @@
+.flavor-picker__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.flavor-picker__label span {
+  color: var(--white);
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 13px;
+}
+
+.flavor-picker__grid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.flavor-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: var(--surface2);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  font-family: inherit;
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.flavor-btn:hover {
+  border-color: var(--yellow);
+  background: rgba(255, 226, 34, 0.05);
+}
+
+.flavor-btn.active {
+  border-color: var(--yellow);
+  background: rgba(255, 226, 34, 0.1);
+  color: var(--yellow);
+}
+
+/* ── MOBILE */
+@media (max-width: 768px) {
+  .flavor-picker__grid { gap: 8px; }
+  .flavor-btn { padding: 8px 10px; font-size: 12px; }
+}

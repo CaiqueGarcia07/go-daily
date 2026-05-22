@@ -1,0 +1,20 @@
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+}
+
+/* ── TABLET */
+@media (max-width: 1024px) {
+  .catalog-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+}
+
+/* ── MOBILE */
+@media (max-width: 768px) {
+  .catalog-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+}
+
+/* ── SMALL MOBILE */
+@media (max-width: 480px) {
+  .catalog-grid { grid-template-columns: 1fr; max-width: 340px; margin: 0 auto; }
+}
