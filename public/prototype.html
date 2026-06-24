@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go!Daily — Protótipo</title>
+<link rel="icon" href="./favicon.svg">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+
+<!--
+╔══════════════════════════════════════════════════════════╗
+║  GUIA DE IMAGENS — Adicione os arquivos abaixo em       ║
+║  go-daily/public/ para ativar as fotos no protótipo      ║
+╠══════════════════════════════════════════════════════════╣
+║  popup-person.jpeg    → foto da mulher (imagem 5)         ║
+║  review-aline.jpeg    → foto da Aline Freitas (img 6)     ║
+║  review-anaclara.jpeg → foto Ana Clara (imagem 7)         ║
+║  review-yasmin.jpeg   → foto Yasmin (imagem 8)            ║
+║  review-ciely.jpeg    → foto Ciely (imagem 9)             ║
+║  bottle-caramelo.png → pote Whey Caramelo (img 10)       ║
+║  bottle-morango.png  → pote Whey Morango (img 11)        ║
+║  bottle-creatina-frutas.png → Creatina Frutas (img 12)   ║
+║  bottle-creatina-maca.png   → Creatina Maçã (img 13)     ║
+╚══════════════════════════════════════════════════════════╝
+-->
+
+<style>
+/* ═══ TOKENS ═══ */
+:root {
+  --bg: #161215;
+  --surface: #1e1a1d;
+  --surface2: #252025;
+  --surface3: #2e2830;
+  --brown: #7a3e1d;
+  --orange: #e6a15a;
+  --ocre: #c8742f;
+  --yellow: #ffe222;
+  --white: #f5f2ec;
+  --muted: rgba(245,242,236,.45);
+  --muted2: rgba(245,242,236,.2);
+  --border: rgba(200,116,47,.25);
+  --border-y: rgba(255,226,34,.2);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --radius-pill: 100px;
+  --t: .18s ease;
+  --shadow-card: 0 20px 56px rgba(0,0,0,.5);
+  --shadow-btn: 0 10px 32px rgba(255,226,34,.35);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:'Satoshi',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6}
+img{display:block;max-width:100%}
+button{font-family:inherit;cursor:pointer}
+a{text-decoration:none;color:inherit}
+
+/* ═══ LAYOUT ═══ */
+.container{max-width:1360px;margin:0 auto;padding:0 64px}
+.section{padding:96px 0}
+.section--dark{background:var(--surface)}
+.section--darker{background:var(--surface2)}
+
+/* ═══ TYPOGRAPHY ═══ */
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.eyebrow--yellow{color:var(--yellow)}
+.section-title{font-size:clamp(28px,3vw,40px);font-weight:900;letter-spacing:-.03em;line-height:1.05}
+.section-title em{font-style:normal;color:var(--yellow)}
+.section-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:52px;gap:24px}
+.section-header-left{display:flex;flex-direction:column;gap:8px}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:14px;border:none;border-radius:var(--radius-sm);padding:12px 24px;cursor:pointer;transition:transform var(--t),box-shadow var(--t),background var(--t),color var(--t);font-family:inherit}
+.btn--primary{background:var(--yellow);color:var(--bg)}
+.btn--primary:hover{transform:translateY(-2px);box-shadow:var(--shadow-btn)}
+.btn--secondary{background:transparent;color:var(--white);border:1.5px solid var(--muted2)}
+.btn--secondary:hover{border-color:var(--yellow);color:var(--yellow)}
+.btn--outline{background:transparent;color:var(--yellow);border:1px solid var(--yellow)}
+.btn--outline:hover{background:rgba(255,226,34,.08)}
+.btn--lg{font-size:16px;padding:16px 36px}
+.btn--sm{font-size:12px;padding:8px 16px}
+.btn--full{width:100%}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;padding:4px 10px;border-radius:var(--radius-pill)}
+.badge--yellow{background:var(--yellow);color:var(--bg)}
+.badge--orange{background:rgba(122,62,29,.3);border:1px solid rgba(200,116,47,.4);color:var(--orange)}
+.badge--accent{background:rgba(255,226,34,.1);border:1px solid rgba(255,226,34,.35);color:var(--yellow)}
+.attr-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:6px 13px;border-radius:var(--radius-pill);background:rgba(122,62,29,.25);border:1px solid rgba(200,116,47,.4);color:var(--orange)}
+
+/* ═══ ANIMATIONS ═══ */
+[data-animate]{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+[data-animate].visible{opacity:1;transform:translateY(0)}
+[data-delay="1"]{transition-delay:.1s}[data-delay="2"]{transition-delay:.2s}[data-delay="3"]{transition-delay:.3s}[data-delay="4"]{transition-delay:.4s}
+
+/* ════════════════════════════════════
+   ANNOUNCEMENT STRIP
+════════════════════════════════════ */
+.announcement{background:var(--yellow);color:var(--bg);text-align:center;padding:10px 20px;font-size:13px;font-weight:700;letter-spacing:.04em;position:relative;z-index:300}
+.announcement a{color:var(--bg);text-decoration:underline}
+
+/* ════════════════════════════════════
+   HEADER — SAVOR STYLE
+════════════════════════════════════ */
+.site-header{position:fixed;top:36px;left:0;width:100%;z-index:200;background:transparent;border-bottom:1px solid transparent;transition:background .35s ease,top .35s ease,border-color .35s ease}
+.site-header.scrolled{background:rgba(0,0,0,.97);backdrop-filter:blur(16px);top:0;border-bottom-color:rgba(255,255,255,.06)}
+.header-inner{display:flex;align-items:center;height:68px;gap:0;position:relative}
+
+/* Logo */
+.header-logo{display:inline-flex;align-items:center;flex-shrink:0;transition:opacity var(--t);margin-right:40px}
+.header-logo:hover{opacity:.8}
+.header-logo img{height:36px;width:auto}
+
+/* Navigation */
+.header-nav{display:flex;align-items:center;gap:0;flex:1}
+.nav-item{position:relative}
+.nav-link{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(245,242,236,.75);padding:0 18px;height:68px;cursor:pointer;transition:color var(--t);white-space:nowrap;background:none;border:none;font-family:inherit}
+.nav-link:hover,.nav-link.active{color:var(--white)}
+.nav-link svg{width:10px;height:10px;transition:transform .2s}
+.nav-item:hover .nav-link svg{transform:rotate(180deg)}
+.nav-arrow{font-size:10px;opacity:.6;transition:transform .2s;display:inline-block}
+.nav-item:hover .nav-arrow{transform:rotate(180deg)}
+
+/* DROPDOWN */
+.nav-dropdown{position:absolute;top:100%;left:-20px;background:#111;border:1px solid rgba(255,255,255,.08);border-top:2px solid var(--yellow);border-radius:0 0 var(--radius) var(--radius);display:none;min-width:560px;box-shadow:0 24px 64px rgba(0,0,0,.7);overflow:hidden}
+.nav-item:hover .nav-dropdown{display:flex}
+.dropdown-left{padding:20px 0;width:200px;border-right:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.dropdown-link{display:block;padding:10px 24px;font-size:13px;font-weight:600;color:rgba(245,242,236,.7);transition:all .15s;cursor:pointer}
+.dropdown-link:hover{background:rgba(255,226,34,.06);color:var(--yellow);padding-left:30px}
+.dropdown-link.sep{margin-top:12px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
+.dropdown-right{flex:1;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start}
+.dropdown-card{border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;position:relative;aspect-ratio:16/9;background:var(--surface2)}
+.dropdown-card img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.dropdown-card:hover img{transform:scale(1.05)}
+.dropdown-card-label{position:absolute;bottom:0;left:0;right:0;padding:8px 10px;background:linear-gradient(to top,rgba(0,0,0,.85),transparent);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#fff}
+
+/* Right actions */
+.header-right{display:flex;align-items:center;gap:4px;margin-left:auto}
+.header-icon-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-xs);background:transparent;border:none;color:rgba(245,242,236,.8);font-size:18px;cursor:pointer;transition:color var(--t),background var(--t);position:relative}
+.header-icon-btn:hover{color:#fff;background:rgba(255,255,255,.07)}
+.cart-badge{position:absolute;top:4px;right:4px;width:16px;height:16px;border-radius:50%;background:var(--yellow);color:var(--bg);font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.mobile-menu-btn{display:none}
+
+/* ════════════════════════════════════
+   HERO CAROUSEL
+════════════════════════════════════ */
+.hero-carousel{position:relative;width:100%;height:100vh;min-height:600px;overflow:hidden}
+.carousel-track{display:flex;width:100%;height:100%;transition:transform .75s cubic-bezier(.77,0,.175,1)}
+.carousel-slide{min-width:100%;height:100%;position:relative;display:flex;align-items:center;overflow:hidden}
+
+.slide-1{background:linear-gradient(135deg,#0a0809 0%,#1c0f05 50%,#2a1a08 100%)}
+.slide-1::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 68% 50%,rgba(200,116,47,.2) 0%,transparent 70%)}
+.slide-2{background:linear-gradient(135deg,#060a0f 0%,#0a1520 50%,#0d2030 100%)}
+.slide-2::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 65% 50%,rgba(41,128,185,.18) 0%,transparent 70%)}
+.slide-3{background:#0a0a0a}
+
+.slide-content{position:relative;z-index:2;max-width:660px;padding:0 80px}
+.slide-content .eyebrow{margin-bottom:20px}
+.slide-content h2{font-size:clamp(38px,5.5vw,72px);font-weight:900;line-height:.98;letter-spacing:-.04em;margin-bottom:22px}
+.slide-content h2 span{color:var(--yellow)}
+.slide-content p{font-size:18px;color:var(--muted);margin-bottom:36px;max-width:460px;line-height:1.7}
+.slide-buttons{display:flex;gap:14px;flex-wrap:wrap}
+.slide-img{position:absolute;right:6%;bottom:0;height:92%;object-fit:contain;filter:drop-shadow(0 20px 80px rgba(0,0,0,.55));z-index:1}
+
+.video-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.video-placeholder::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(255,226,34,.05) 0%,transparent 70%)}
+.play-btn{width:84px;height:84px;border-radius:50%;background:var(--yellow);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:28px;transition:transform .2s,box-shadow .2s;position:relative;z-index:1}
+.play-btn:hover{transform:scale(1.08);box-shadow:0 0 60px rgba(255,226,34,.4)}
+.play-btn::after{content:'▶';margin-left:5px;color:var(--bg)}
+.video-label{font-size:15px;color:var(--muted);font-weight:600;position:relative;z-index:1}
+
+.carousel-dots{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:10}
+.cdot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);border:none;cursor:pointer;transition:all .3s;padding:0}
+.cdot.active{background:var(--yellow);width:28px;border-radius:100px}
+.carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;backdrop-filter:blur(8px)}
+.carousel-arrow:hover{background:var(--yellow);color:var(--bg);border-color:var(--yellow)}
+.carousel-prev{left:28px}
+.carousel-next{right:28px}
+.scroll-cue{position:absolute;bottom:32px;right:48px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;z-index:10}
+.scroll-cue::after{content:'';width:1px;height:40px;background:linear-gradient(to bottom,var(--muted),transparent);animation:scrollPulse 1.8s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* ════════════════════════════════════
+   TRUST BAR
+════════════════════════════════════ */
+.trust-bar{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:24px 0;background:var(--surface2)}
+.trust-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.trust-item{display:flex;align-items:center;gap:12px;padding:0 28px;border-right:1px solid var(--border)}
+.trust-item:last-child{border-right:none}
+.trust-item__icon{font-size:24px;flex-shrink:0}
+.trust-item__label{font-weight:700;font-size:13px}
+.trust-item__sub{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* ════════════════════════════════════
+   PRODUCTS — GUday CARD STYLE
+════════════════════════════════════ */
+.products-section{padding:96px 0}
+
+/* Tab switcher */
+.product-tabs{display:flex;gap:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-pill);padding:5px;width:fit-content;margin-bottom:52px}
+.ptab{padding:10px 28px;border-radius:var(--radius-pill);font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;background:none;border:none;color:var(--muted);transition:all .2s;font-family:inherit}
+.ptab.active{background:var(--yellow);color:var(--bg)}
+
+/* Cards grid */
+.product-cards-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.product-cards-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.product-cards-grid.cols-2{grid-template-columns:repeat(2,1fr);max-width:860px;margin:0 auto}
+
+/* Individual product card (GUday style) */
+.pcard{border-radius:20px;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:0 0 24px;cursor:pointer;transition:transform .25s,box-shadow .25s;position:relative}
+.pcard:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,.55)}
+.pcard__img-zone{width:100%;aspect-ratio:3/3.2;display:flex;align-items:flex-end;justify-content:center;padding:24px 20px 0;position:relative;overflow:hidden}
+.pcard__img{width:100%;height:100%;object-fit:contain;object-position:center bottom;transition:transform .4s;filter:drop-shadow(0 8px 24px rgba(0,0,0,.35))}
+.pcard:hover .pcard__img{transform:scale(1.06) translateY(-4px)}
+.pcard__img-emoji{font-size:90px;line-height:1;filter:drop-shadow(0 8px 24px rgba(0,0,0,.3))}
+.pcard__badge{position:absolute;top:14px;left:14px;font-size:10px;font-weight:900;padding:4px 10px;border-radius:var(--radius-pill);z-index:2}
+.pcard__badge--sale{background:var(--yellow);color:#000}
+.pcard__badge--new{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.pcard__body{width:100%;padding:18px 20px 0;text-align:center}
+.pcard__name{font-size:14px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em;line-height:1.3}
+.pcard__brand{font-size:22px;font-weight:900;color:#fff;line-height:1.1;margin:2px 0 4px}
+.pcard__flavor{font-size:12px;font-weight:600;color:rgba(255,255,255,.55);margin-bottom:14px}
+.pcard__price{font-size:26px;font-weight:900;color:var(--yellow);line-height:1;margin-bottom:4px}
+.pcard__install{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:16px}
+.pcard__btn{width:calc(100% - 40px);background:#fff;color:#111;border:none;border-radius:var(--radius-pill);padding:12px 0;font-size:13px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:inherit}
+.pcard__btn:hover{background:var(--yellow)}
+
+/* Product color themes */
+.pcard--caramelo{background:linear-gradient(165deg,#b55a14,#7a3209)}
+.pcard--morango{background:linear-gradient(165deg,#d4286a,#8c1045)}
+.pcard--frutas{background:linear-gradient(165deg,#7c1414,#4a0a0a)}
+.pcard--maca{background:linear-gradient(165deg,#2d7d2d,#1a4d1a)}
+.pcard--cr-frutas{background:linear-gradient(165deg,#c62828,#7a0a0a)}
+.pcard--cr-maca{background:linear-gradient(165deg,#2e7d32,#1b5e20)}
+.pcard--cr-tropical{background:linear-gradient(165deg,#e65100,#bf360c)}
+.pcard--cr-kit{background:linear-gradient(165deg,#0d47a1,#1565c0)}
+
+/* Line banner (separating Whey from Creatina) */
+.line-banner{display:flex;align-items:center;gap:20px;padding:32px 0 44px}
+.line-banner__line{flex:1;height:1px;background:var(--border)}
+.line-banner__label{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+
+/* ════════════════════════════════════
+   REVIEW CAROUSEL
+════════════════════════════════════ */
+.rc-wrapper{position:relative;overflow:hidden;border-radius:var(--radius)}
+.rc-track{display:flex;transition:transform .65s cubic-bezier(.77,0,.175,1)}
+.rc-slide{min-width:100%;padding:4px}
+
+/* Each review card: photo left + content right */
+.rc-card{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;min-height:260px}
+.rc-photo-col{width:260px;flex-shrink:0;position:relative;overflow:hidden;background:var(--surface2)}
+.rc-photo-col img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+.rc-photo-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:72px;background:var(--surface2)}
+.rc-content{flex:1;padding:36px 40px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.rc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.rc-meta{}
+.rc-name{font-size:18px;font-weight:900;margin-bottom:4px}
+.rc-date{font-size:12px;color:var(--muted)}
+.rc-verified{font-size:11px;font-weight:700;color:#4ade80;margin-top:2px}
+.rc-stars{color:var(--yellow);font-size:20px;letter-spacing:-1px}
+.rc-flavor-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 12px;border-radius:var(--radius-pill);background:rgba(122,62,29,.2);border:1px solid rgba(200,116,47,.3);color:var(--orange);align-self:flex-start}
+.rc-text{font-size:15px;color:rgba(245,242,236,.8);line-height:1.7;font-style:italic}
+.rc-text::before{content:'"';color:var(--yellow);font-size:32px;line-height:0;vertical-align:-12px;margin-right:4px;font-style:normal}
+.rc-text::after{content:'"';color:var(--yellow);font-size:32px;line-height:0;vertical-align:-12px;margin-left:4px;font-style:normal}
+.rc-helpful{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-top:4px}
+.rc-helpful button{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-pill);padding:4px 12px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .2s;font-family:inherit}
+.rc-helpful button:hover{border-color:var(--yellow);color:var(--yellow)}
+
+/* Nav dots + arrows */
+.rc-dots{display:flex;justify-content:center;gap:10px;margin-top:24px}
+.rc-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);border:none;cursor:pointer;transition:all .3s;padding:0}
+.rc-dot.active{background:var(--yellow);width:28px;border-radius:100px}
+.rc-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;backdrop-filter:blur(8px)}
+.rc-arrow:hover{background:var(--yellow);color:var(--bg);border-color:var(--yellow)}
+.rc-prev{left:14px}.rc-next{right:14px}
+
+/* Rating summary bar — keep but compact */
+.rating-summary{display:flex;align-items:center;gap:48px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 36px;margin-bottom:40px}
+.rating-big__num{font-size:60px;font-weight:900;line-height:1;color:var(--yellow)}
+.rating-big .stars{font-size:18px;color:var(--yellow);letter-spacing:-1px}
+.rating-big__count{font-size:12px;color:var(--muted);margin-top:4px}
+.rating-bars{display:flex;flex-direction:column;gap:7px;flex:1}
+.rating-bar-row{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)}
+.rating-bar-label{width:10px;text-align:right;font-weight:700}
+.rating-bar-track{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.rating-bar-fill{height:100%;background:var(--yellow);border-radius:3px;width:0;transition:width 1.2s ease}
+.rating-bar-count{width:36px;font-size:11px}
+@media(max-width:768px){
+  .rc-card{flex-direction:column}
+  .rc-photo-col{width:100%;height:220px}
+  .rc-content{padding:24px 22px}
+  .rc-arrow{display:none}
+  .rating-summary{flex-direction:column;gap:20px}
+}
+
+/* ════════════════════════════════════
+   BLOG
+════════════════════════════════════ */
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.blog-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .3s,transform .3s}
+.blog-card:hover{border-color:rgba(255,226,34,.3);transform:translateY(-4px)}
+.blog-card__thumb{height:192px;display:flex;align-items:center;justify-content:center;font-size:52px;position:relative;overflow:hidden}
+.blog-card__thumb::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.5))}
+.blog-card__body{padding:20px 22px 22px}
+.blog-card__cat{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--yellow);margin-bottom:8px}
+.blog-card__title{font-size:16px;font-weight:700;line-height:1.35;margin-bottom:10px}
+.blog-card__excerpt{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:16px}
+.blog-card__footer{display:flex;align-items:center;justify-content:space-between}
+.blog-card__date{font-size:12px;color:var(--muted)}
+.blog-card__read{font-size:12px;font-weight:700;color:var(--yellow);display:flex;align-items:center;gap:4px}
+
+/* ════════════════════════════════════
+   FOOTER
+════════════════════════════════════ */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:60px 0 32px}
+.footer-grid{display:grid;grid-template-columns:1.6fr repeat(3,1fr);gap:48px;margin-bottom:48px}
+.footer-brand p{font-size:14px;color:var(--muted);margin-top:14px;max-width:260px;line-height:1.7}
+.footer-logo{height:34px}
+.footer-col h4{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.footer-col a{display:block;font-size:14px;color:rgba(245,242,236,.65);margin-bottom:10px;transition:color .2s}
+.footer-col a:hover{color:var(--yellow)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:24px;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
+
+/* ════════════════════════════════════
+   POPUP — SPLIT LAYOUT
+════════════════════════════════════ */
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s;backdrop-filter:blur(8px)}
+.popup-overlay.active{opacity:1;pointer-events:all}
+.popup-card{background:var(--surface);border-radius:20px;width:100%;max-width:680px;overflow:hidden;position:relative;transform:translateY(24px) scale(.96);transition:transform .45s cubic-bezier(.34,1.56,.64,1);box-shadow:0 40px 100px rgba(0,0,0,.7);display:flex;border:1px solid rgba(255,226,34,.12)}
+.popup-overlay.active .popup-card{transform:translateY(0) scale(1)}
+.popup-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:5}
+.popup-close:hover{background:var(--yellow);color:var(--bg);border-color:var(--yellow)}
+
+/* Left photo side */
+.popup-photo{width:44%;flex-shrink:0;position:relative;overflow:hidden;min-height:520px;background:linear-gradient(160deg,#2a1a0a,#0a0506)}
+.popup-photo img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.popup-photo__fallback{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px}
+.popup-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,transparent 70%,var(--surface) 100%)}
+.popup-photo__overlay{position:absolute;bottom:24px;left:20px;right:20px;z-index:2}
+.popup-photo__tag{background:var(--yellow);color:var(--bg);font-size:11px;font-weight:800;padding:5px 12px;border-radius:var(--radius-pill);display:inline-flex;align-items:center;gap:6px;margin-bottom:10px}
+.popup-photo__quote{font-size:13px;color:rgba(255,255,255,.85);font-weight:600;line-height:1.5}
+
+/* Right form side */
+.popup-form-side{flex:1;padding:40px 36px 36px}
+.popup-discount-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,226,34,.12);border:1px solid rgba(255,226,34,.3);color:var(--yellow);font-size:11px;font-weight:800;padding:5px 14px;border-radius:var(--radius-pill);margin-bottom:18px}
+.popup-form-side h3{font-size:24px;font-weight:900;line-height:1.2;margin-bottom:10px}
+.popup-form-side h3 span{color:var(--yellow)}
+.popup-form-side p{font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.6}
+.popup-fields{display:flex;flex-direction:column;gap:10px}
+.popup-input{width:100%;background:var(--surface2);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-sm);padding:12px 14px;font-size:14px;color:var(--white);font-family:inherit;outline:none;transition:border-color .2s}
+.popup-input:focus{border-color:var(--yellow)}
+.popup-input::placeholder{color:var(--muted)}
+.popup-phone-row{display:grid;grid-template-columns:96px 1fr;gap:10px}
+.popup-flag-select{background:var(--surface2);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-sm);padding:12px 14px;font-size:14px;color:var(--white);font-family:inherit;outline:none;cursor:pointer}
+.popup-date-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.popup-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;display:block}
+.popup-cta{width:100%;background:var(--yellow);color:var(--bg);border:none;border-radius:var(--radius-sm);padding:15px;font-size:15px;font-weight:900;cursor:pointer;transition:transform .2s,box-shadow .2s;font-family:inherit;margin-top:6px}
+.popup-cta:hover{transform:translateY(-2px);box-shadow:var(--shadow-btn)}
+.popup-disclaimer{font-size:11px;color:var(--muted);text-align:center;margin-top:10px;line-height:1.5}
+
+/* ════════════════════════════════════
+   PRODUCT DETAIL PAGE
+════════════════════════════════════ */
+.slide-page{position:fixed;inset:0;background:var(--bg);z-index:500;overflow-y:auto;transform:translateX(100%);transition:transform .5s cubic-bezier(.77,0,.175,1)}
+.slide-page.active{transform:translateX(0)}
+.detail-nav{display:flex;align-items:center;gap:16px;padding:22px 64px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:10}
+.detail-back{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;transition:color .2s;background:none;border:none;padding:0;font-family:inherit}
+.detail-back:hover{color:var(--yellow)}
+.detail-content{max-width:1100px;margin:0 auto;padding:60px 64px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
+.detail-visual{position:sticky;top:100px}
+.detail-visual__main{aspect-ratio:1;border-radius:var(--radius);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:14px;position:relative}
+.detail-flavor-thumbs{display:flex;gap:8px;flex-wrap:wrap}
+.detail-thumb{width:60px;height:60px;border-radius:var(--radius-sm);background:var(--surface2);border:2px solid var(--border);cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:border-color .2s;font-size:24px}
+.detail-thumb.active,.detail-thumb:hover{border-color:var(--yellow)}
+.detail-thumb img{width:100%;height:100%;object-fit:contain}
+.detail-info{display:flex;flex-direction:column}
+.detail-info .badge{margin-bottom:12px;align-self:flex-start}
+.detail-product-name{font-size:38px;font-weight:900;line-height:1.05;letter-spacing:-.025em;margin-bottom:4px}
+.detail-product-name span{color:var(--yellow)}
+.detail-flavor-name{font-size:18px;color:var(--muted);margin-bottom:18px}
+.detail-rating-row{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+.detail-rating-row .stars{font-size:16px;color:var(--yellow);letter-spacing:-1px}
+.detail-rating-row span{font-size:13px;color:var(--muted)}
+.detail-price-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:22px}
+.detail-old-price{font-size:13px;color:var(--muted);text-decoration:line-through;margin-bottom:4px}
+.detail-price{font-size:40px;font-weight:900;color:var(--yellow);line-height:1;margin-bottom:4px}
+.detail-installments{font-size:13px;color:var(--muted)}
+.detail-attrs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:22px}
+.detail-flavor-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em}
+.detail-flavors{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.detail-flavor-option{border:2px solid var(--border);border-radius:var(--radius-sm);padding:8px 14px;cursor:pointer;font-size:12px;font-weight:700;background:transparent;color:var(--white);transition:all .2s;font-family:inherit}
+.detail-flavor-option.active,.detail-flavor-option:hover{border-color:var(--yellow);color:var(--yellow)}
+.detail-qty{display:flex;align-items:center;gap:16px;margin-bottom:22px}
+.qty-label{font-size:12px;font-weight:700;color:var(--muted)}
+.qty-ctrl{display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.qty-btn{width:40px;height:40px;background:none;border:none;color:var(--white);font-size:18px;cursor:pointer;transition:background .2s;font-family:inherit}
+.qty-btn:hover{background:rgba(255,226,34,.08)}
+.qty-val{width:44px;text-align:center;font-weight:700;font-size:15px}
+.detail-actions{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.detail-accordion{border-top:1px solid var(--border)}
+.accordion-item{border-bottom:1px solid var(--border)}
+.accordion-btn{width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px 0;background:none;border:none;color:var(--white);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:color .2s}
+.accordion-btn:hover,.accordion-item.open .accordion-btn{color:var(--yellow)}
+.accordion-chevron{transition:transform .3s;font-size:13px;color:var(--muted)}
+.accordion-item.open .accordion-chevron{transform:rotate(180deg)}
+.accordion-body{display:none;font-size:13px;color:rgba(245,242,236,.7);line-height:1.7;padding-bottom:16px}
+.accordion-item.open .accordion-body{display:block}
+
+/* ════════════════════════════════════
+   BLOG ARTICLE PAGE
+════════════════════════════════════ */
+.blog-article-page{position:fixed;inset:0;background:var(--bg);z-index:500;overflow-y:auto;transform:translateX(100%);transition:transform .5s cubic-bezier(.77,0,.175,1)}
+.blog-article-page.active{transform:translateX(0)}
+.article-hero{padding:80px 0 60px;text-align:center;border-bottom:1px solid var(--border)}
+.article-cat{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--yellow);margin-bottom:16px}
+.article-title{font-size:clamp(32px,4vw,52px);font-weight:900;letter-spacing:-.03em;line-height:1.05;margin-bottom:20px;max-width:720px;margin-left:auto;margin-right:auto}
+.article-meta{display:flex;align-items:center;justify-content:center;gap:20px;font-size:13px;color:var(--muted)}
+.article-body{max-width:720px;margin:60px auto;padding:0 24px}
+.article-body h2{font-size:24px;font-weight:900;margin:40px 0 14px;color:var(--white)}
+.article-body h3{font-size:18px;font-weight:700;margin:28px 0 10px;color:var(--yellow)}
+.article-body p{font-size:16px;color:rgba(245,242,236,.8);line-height:1.8;margin-bottom:20px}
+.article-body ul,.article-body ol{padding-left:24px;margin-bottom:20px}
+.article-body li{font-size:16px;color:rgba(245,242,236,.8);line-height:1.8;margin-bottom:8px}
+.article-body strong{color:var(--white);font-weight:700}
+.article-highlight{background:var(--surface);border:1px solid var(--border-y);border-radius:var(--radius);padding:24px 28px;margin:32px 0;border-left:3px solid var(--yellow)}
+.article-highlight p{color:rgba(245,242,236,.9);font-size:15px;margin:0}
+.article-cta{background:linear-gradient(135deg,#1a0f05,#2a1a08);border:1px solid var(--border-y);border-radius:var(--radius);padding:36px;text-align:center;margin:48px 0}
+.article-cta h3{font-size:22px;font-weight:900;margin-bottom:10px}
+.article-cta p{color:var(--muted);margin-bottom:20px;font-size:14px}
+
+/* ════════════════════════════════════
+   CART DRAWER
+════════════════════════════════════ */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:700;opacity:0;pointer-events:none;transition:opacity .35s;backdrop-filter:blur(4px)}
+.cart-overlay.open{opacity:1;pointer-events:all}
+.cart-drawer{position:fixed;top:0;right:0;width:440px;max-width:100vw;height:100%;background:var(--surface);z-index:800;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .4s cubic-bezier(.77,0,.175,1);box-shadow:-24px 0 80px rgba(0,0,0,.55)}
+.cart-drawer.open{transform:translateX(0)}
+.cart-drawer-header{display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid var(--border);flex-shrink:0}
+.cart-drawer-title{font-size:18px;font-weight:900;display:flex;align-items:center;gap:10px}
+.cart-drawer-close{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.7);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.cart-drawer-close:hover{background:var(--yellow);color:var(--bg);border-color:var(--yellow)}
+.cart-drawer-body{flex:1;overflow-y:auto;padding:16px 24px}
+.cart-drawer-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;color:var(--muted);text-align:center}
+.cart-drawer-empty .empty-icon{font-size:52px}
+.cart-drawer-empty p{font-size:14px;line-height:1.5}
+.cart-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.cart-item:last-child{border-bottom:none}
+.cart-item__img{width:76px;height:76px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cart-item__img img{width:100%;height:100%;object-fit:contain}
+.cart-item__info{flex:1;display:flex;flex-direction:column;gap:4px}
+.cart-item__line{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.cart-item__name{font-size:14px;font-weight:700;line-height:1.3}
+.cart-item__flavor{font-size:12px;color:var(--muted)}
+.cart-item__price{font-size:15px;font-weight:900;color:var(--yellow)}
+.cart-item__actions{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.cart-qty{display:flex;align-items:center;background:var(--surface3);border:1px solid var(--border);border-radius:var(--radius-xs);overflow:hidden}
+.cart-qty-btn{width:28px;height:28px;background:none;border:none;color:var(--white);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.cart-qty-btn:hover{background:rgba(255,226,34,.1);color:var(--yellow)}
+.cart-qty-val{width:28px;text-align:center;font-size:13px;font-weight:700}
+.cart-remove{background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;transition:color .2s;padding:2px 4px;border-radius:4px}
+.cart-remove:hover{color:#f87171}
+.cart-drawer-footer{padding:16px 24px 24px;border-top:1px solid var(--border);flex-shrink:0}
+.cart-subtotal-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.cart-subtotal-label{font-size:14px;color:var(--muted)}
+.cart-subtotal-val{font-size:20px;font-weight:900;color:var(--white)}
+.cart-drawer-btns{display:flex;flex-direction:column;gap:10px}
+.cart-free-ship{text-align:center;font-size:12px;color:var(--muted);margin-bottom:8px}
+.cart-free-ship span{color:#4ade80;font-weight:700}
+
+/* ════════════════════════════════════
+   CART PAGE (full screen)
+════════════════════════════════════ */
+.cart-page{position:fixed;inset:0;background:var(--bg);z-index:900;overflow-y:auto;transform:translateX(100%);transition:transform .5s cubic-bezier(.77,0,.175,1)}
+.cart-page.active{transform:translateX(0)}
+.cart-page-inner{max-width:1100px;margin:0 auto;padding:60px 64px;display:grid;grid-template-columns:1fr 380px;gap:48px;align-items:start}
+.cart-page-title{font-size:32px;font-weight:900;margin-bottom:32px;letter-spacing:-.025em}
+.cart-page-title em{color:var(--yellow);font-style:normal}
+.cart-page-items{display:flex;flex-direction:column;gap:0}
+.cart-page-item{display:flex;gap:20px;padding:20px 0;border-bottom:1px solid var(--border);align-items:center}
+.cart-page-item__img{width:96px;height:96px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cart-page-item__img img{width:100%;height:100%;object-fit:contain}
+.cart-page-item__info{flex:1}
+.cart-page-item__line{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
+.cart-page-item__name{font-size:16px;font-weight:700}
+.cart-page-item__flavor{font-size:13px;color:var(--muted);margin-bottom:10px}
+.cart-page-item__qty{display:flex;align-items:center;gap:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-xs);overflow:hidden;width:fit-content}
+.cart-page-item__qty-btn{width:32px;height:32px;background:none;border:none;color:var(--white);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.cart-page-item__qty-btn:hover{background:rgba(255,226,34,.1);color:var(--yellow)}
+.cart-page-item__qty-val{width:32px;text-align:center;font-size:14px;font-weight:700}
+.cart-page-item__price{font-size:20px;font-weight:900;color:var(--yellow);white-space:nowrap;margin-left:16px}
+.cart-page-item__remove{margin-left:12px;background:none;border:none;font-size:18px;color:var(--muted);cursor:pointer;transition:color .2s}
+.cart-page-item__remove:hover{color:#f87171}
+.cart-summary{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;position:sticky;top:100px}
+.cart-summary h3{font-size:18px;font-weight:900;margin-bottom:20px}
+.cart-summary-rows{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.cart-summary-row{display:flex;justify-content:space-between;font-size:14px}
+.cart-summary-row span:first-child{color:var(--muted)}
+.cart-summary-row span:last-child{font-weight:700}
+.cart-summary-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.cart-summary-total span:first-child{font-size:15px;font-weight:700}
+.cart-summary-total span:last-child{font-size:26px;font-weight:900;color:var(--yellow)}
+.cart-coupon{display:flex;gap:8px;margin-bottom:20px}
+.cart-coupon input{flex:1;background:var(--surface2);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;color:var(--white);font-family:inherit;outline:none;transition:border-color .2s}
+.cart-coupon input:focus{border-color:var(--yellow)}
+.cart-coupon input::placeholder{color:var(--muted)}
+.cart-coupon button{background:var(--yellow);color:var(--bg);border:none;border-radius:var(--radius-sm);padding:10px 16px;font-size:13px;font-weight:900;cursor:pointer;white-space:nowrap;font-family:inherit;transition:opacity .2s}
+.cart-coupon button:hover{opacity:.85}
+@media(max-width:900px){.cart-page-inner{grid-template-columns:1fr;padding:40px 24px}.cart-summary{position:static}}
+@media(max-width:768px){.cart-drawer{width:100vw}}
+
+/* ════════════════════════════════════
+   SCROLL TOP
+════════════════════════════════════ */
+.scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:50%;background:var(--yellow);border:none;color:var(--bg);font-size:18px;cursor:pointer;opacity:0;pointer-events:none;transition:all .3s;z-index:400;display:flex;align-items:center;justify-content:center}
+.scroll-top.visible{opacity:1;pointer-events:all}
+.scroll-top:hover{transform:translateY(-3px);box-shadow:var(--shadow-btn)}
+
+/* ════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════ */
+@media(max-width:1100px){
+  .product-cards-grid{grid-template-columns:repeat(2,1fr)}
+  .product-cards-grid.cols-3{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:1024px){
+  .container{padding:0 32px}
+  .reviews-grid{grid-template-columns:repeat(2,1fr)}
+  .blog-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .trust-grid{grid-template-columns:repeat(2,1fr);gap:0}
+  .trust-item:nth-child(2){border-right:none}
+  .trust-item:nth-child(3){border-bottom:none}
+  .detail-content{grid-template-columns:1fr;padding:40px 32px}
+  .detail-visual{position:static}
+  .detail-nav{padding:20px 32px}
+}
+@media(max-width:768px){
+  .container{padding:0 20px}
+  .section{padding:64px 0}
+  .header-nav{display:none}
+  .mobile-menu-btn{display:flex!important;width:40px;height:40px;align-items:center;justify-content:center;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;border-radius:var(--radius-xs);transition:background var(--t)}
+  .slide-content{padding:0 24px}
+  .slide-img{display:none}
+  .product-cards-grid{grid-template-columns:repeat(2,1fr)}
+  .reviews-grid{grid-template-columns:1fr}
+  .blog-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .rating-summary{flex-direction:column;gap:20px}
+  .popup-photo{display:none}
+  .popup-card{max-width:420px}
+  .popup-form-side{padding:32px 24px}
+  .detail-nav,.detail-content{padding-left:20px;padding-right:20px}
+  .article-body{padding:0 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- ════ ANNOUNCEMENT STRIP ════ -->
+<div class="announcement">
+  ⚡ Frete grátis em pedidos acima de R$ 199 · <a href="#">Ver promoções →</a>
+</div>
+
+<!-- ════ HEADER ════ -->
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+
+    <a href="#" class="header-logo" onclick="return false;">
+      <img src="./logo.svg" alt="Go!Daily">
+    </a>
+
+    <nav class="header-nav">
+      <span class="nav-link" onclick="scrollTo('home')">Home</span>
+
+      <div class="nav-item">
+        <span class="nav-link">Produtos <span class="nav-arrow">▾</span></span>
+        <div class="nav-dropdown">
+          <div class="dropdown-left">
+            <div class="dropdown-link" onclick="showProducts('whey');closeDropdowns()">Whey Gummy</div>
+            <div class="dropdown-link" onclick="showProducts('creatina');closeDropdowns()">Creatina Gummy</div>
+            <div class="dropdown-link sep">Kit Completo</div>
+            <div class="dropdown-link">Novidades</div>
+          </div>
+          <div class="dropdown-right">
+            <div class="dropdown-card" onclick="openProductDetail('whey-caramelo');closeDropdowns()">
+              <img src="./gummy-whey-caramelo-salgado.png" alt="Whey Caramelo" onerror="this.style.display='none'">
+              <div class="dropdown-card-label">Whey Gummy</div>
+            </div>
+            <div class="dropdown-card" style="background:linear-gradient(135deg,#4a0a0a,#7c1414)" onclick="openProductDetail('creatina-frutas');closeDropdowns()">
+              <div style="font-size:48px;text-align:center;padding:16px">🍓</div>
+              <div class="dropdown-card-label">Creatina Gummy</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <span class="nav-link" onclick="scrollTo('depoimentos')">Depoimentos</span>
+      <span class="nav-link" onclick="scrollTo('blog')">Blog</span>
+      <span class="nav-link">Ofertas</span>
+    </nav>
+
+    <button class="mobile-menu-btn">☰</button>
+
+    <div class="header-right">
+      <button class="header-icon-btn" title="Buscar">🔍</button>
+      <button class="header-icon-btn" title="Minha conta">👤</button>
+      <button class="header-icon-btn" title="Carrinho" onclick="openCartDrawer()">
+        🛒
+        <span class="cart-badge" id="cartBadge" style="display:none">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ════ HERO CAROUSEL ════ -->
+<section class="hero-carousel" id="home">
+  <div class="carousel-track" id="carouselTrack">
+
+    <!-- Slide 1: Whey Gummy -->
+    <div class="carousel-slide slide-1">
+      <div class="slide-content">
+        <div class="eyebrow eyebrow--yellow" style="margin-bottom:20px">⚡ LINHA WHEY GUMMY — 4 SABORES</div>
+        <h2>Proteína em<br>forma de bala.<br><span>Sério.</span></h2>
+        <p>12g de proteína em apenas 4 balas. Zero glúten, zero açúcar, 100% sabor. A revolução do suplemento que você vai querer comer todo dia.</p>
+        <div class="slide-buttons">
+          <button class="btn btn--primary btn--lg" onclick="scrollTo('produtos')">Ver todos os sabores →</button>
+          <button class="btn btn--secondary btn--lg" onclick="openProductDetail('whey-caramelo')">Comprar agora</button>
+        </div>
+      </div>
+      <img class="slide-img" src="./gummy-whey-caramelo-salgado.png" alt="Whey Gummy">
+    </div>
+
+    <!-- Slide 2: Creatina Gummy -->
+    <div class="carousel-slide slide-2">
+      <div class="slide-content">
+        <div class="eyebrow" style="margin-bottom:20px;color:#67d7f5">💎 NOVO — CREATINA GUMMY</div>
+        <h2>Creatina nunca<br>foi tão<br><span>gostosa.</span></h2>
+        <p>A primeira creatina em bala de gelatina do Brasil. 3g por porção, biodisponibilidade máxima e sabor incrível. Sua performance em outro nível.</p>
+        <div class="slide-buttons">
+          <button class="btn btn--primary btn--lg" onclick="showProducts('creatina');scrollTo('produtos')">Conhecer Creatina Gummy →</button>
+        </div>
+      </div>
+      <div class="slide-img" style="display:flex;align-items:flex-end;height:90%;font-size:180px;filter:drop-shadow(0 20px 60px rgba(103,215,245,.3))">💎</div>
+    </div>
+
+    <!-- Slide 3: Vídeo -->
+    <div class="carousel-slide slide-3">
+      <div class="video-placeholder" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+        <button class="play-btn" onclick="alert('▶ Reproduzindo vídeo institucional Go!Daily')"></button>
+        <div class="video-label">A história por trás da Go!Daily — 1:42</div>
+      </div>
+    </div>
+
+  </div>
+  <button class="carousel-arrow carousel-prev" onclick="moveCarousel(-1)">‹</button>
+  <button class="carousel-arrow carousel-next" onclick="moveCarousel(1)">›</button>
+  <div class="carousel-dots">
+    <button class="cdot active" onclick="goToSlide(0)"></button>
+    <button class="cdot" onclick="goToSlide(1)"></button>
+    <button class="cdot" onclick="goToSlide(2)"></button>
+  </div>
+  <div class="scroll-cue">Scroll</div>
+</section>
+
+<!-- ════ TRUST BAR ════ -->
+<div class="trust-bar">
+  <div class="container">
+    <div class="trust-grid">
+      <div class="trust-item"><span class="trust-item__icon">🚚</span><div><div class="trust-item__label">Frete Grátis</div><div class="trust-item__sub">Acima de R$ 199</div></div></div>
+      <div class="trust-item"><span class="trust-item__icon">🔒</span><div><div class="trust-item__label">Pagamento Seguro</div><div class="trust-item__sub">SSL & PCI certificado</div></div></div>
+      <div class="trust-item"><span class="trust-item__icon">↩️</span><div><div class="trust-item__label">Devolução Fácil</div><div class="trust-item__sub">Até 30 dias</div></div></div>
+      <div class="trust-item"><span class="trust-item__icon">🏅</span><div><div class="trust-item__label">Qualidade Premium</div><div class="trust-item__sub">Certificado ANVISA</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PRODUCTS SECTION ════ -->
+<section class="products-section" id="produtos">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-header-left">
+        <span class="eyebrow eyebrow--yellow">⚡ NOSSOS PRODUTOS</span>
+        <h2 class="section-title">Escolha seu <em>sabor favorito</em></h2>
+      </div>
+    </div>
+
+    <!-- All 4 products — single grid -->
+    <div class="product-cards-grid" id="allCards">
+      <div class="pcard pcard--caramelo" onclick="openProductDetail('whey-caramelo')" data-animate>
+        <div class="pcard__img-zone">
+          <img class="pcard__img" src="./bottle-caramelo.png" alt="Caramelo"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="pcard__img-emoji" style="display:none">🍯</span>
+          <span class="pcard__badge pcard__badge--sale">🔥 −21%</span>
+        </div>
+        <div class="pcard__body">
+          <div class="pcard__name">Whey Gummy</div>
+          <div class="pcard__brand">Go!Daily</div>
+          <div class="pcard__flavor">🍯 Caramelo Salgado</div>
+          <div class="pcard__price">R$ 149,90</div>
+          <div class="pcard__install">3x de R$ 49,97 sem juros</div>
+        </div>
+        <button class="pcard__btn" onclick="event.stopPropagation();openProductDetail('whey-caramelo')">COMPRAR</button>
+      </div>
+
+      <div class="pcard pcard--morango" onclick="openProductDetail('whey-morango')" data-animate data-delay="1">
+        <div class="pcard__img-zone">
+          <img class="pcard__img" src="./bottle-morango.png" alt="Morango"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="pcard__img-emoji" style="display:none">🍓</span>
+          <span class="pcard__badge pcard__badge--new">🆕 NOVO</span>
+        </div>
+        <div class="pcard__body">
+          <div class="pcard__name">Whey Gummy</div>
+          <div class="pcard__brand">Go!Daily</div>
+          <div class="pcard__flavor">🍓 Morango</div>
+          <div class="pcard__price">R$ 149,90</div>
+          <div class="pcard__install">3x de R$ 49,97 sem juros</div>
+        </div>
+        <button class="pcard__btn" onclick="event.stopPropagation();openProductDetail('whey-morango')">COMPRAR</button>
+      </div>
+
+      <div class="pcard pcard--cr-frutas" onclick="openProductDetail('creatina-frutas')" data-animate data-delay="2">
+        <div class="pcard__img-zone">
+          <img class="pcard__img" src="./bottle-creatina-frutas.png" alt="Creatina Frutas"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="pcard__img-emoji" style="display:none">🍓</span>
+          <span class="pcard__badge pcard__badge--new">💎 NOVO</span>
+        </div>
+        <div class="pcard__body">
+          <div class="pcard__name">Creatina Gummy</div>
+          <div class="pcard__brand">Go!Daily</div>
+          <div class="pcard__flavor">🍓 Frutas Vermelhas</div>
+          <div class="pcard__price">R$ 129,90</div>
+          <div class="pcard__install">3x de R$ 43,30 sem juros</div>
+        </div>
+        <button class="pcard__btn" onclick="event.stopPropagation();openProductDetail('creatina-frutas')">COMPRAR</button>
+      </div>
+
+      <div class="pcard pcard--cr-maca" onclick="openProductDetail('creatina-maca')" data-animate data-delay="3">
+        <div class="pcard__img-zone">
+          <img class="pcard__img" src="./bottle-creatina-maca.png" alt="Creatina Maçã"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="pcard__img-emoji" style="display:none">🍏</span>
+          <span class="pcard__badge pcard__badge--new">💎 NOVO</span>
+        </div>
+        <div class="pcard__body">
+          <div class="pcard__name">Creatina Gummy</div>
+          <div class="pcard__brand">Go!Daily</div>
+          <div class="pcard__flavor">🍏 Maçã Verde</div>
+          <div class="pcard__price">R$ 129,90</div>
+          <div class="pcard__install">3x de R$ 43,30 sem juros</div>
+        </div>
+        <button class="pcard__btn" onclick="event.stopPropagation();openProductDetail('creatina-maca')">COMPRAR</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ TESTIMONIALS ════ -->
+<section class="section section--dark" id="depoimentos">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-header-left">
+        <span class="eyebrow eyebrow--yellow">⭐ DEPOIMENTOS REAIS</span>
+        <h2 class="section-title">O que nossos <em>clientes dizem</em></h2>
+      </div>
+    </div>
+
+    <!-- Rating summary -->
+    <div class="rating-summary" data-animate>
+      <div class="rating-big">
+        <div class="rating-big__num">4.9</div>
+        <div class="stars">★★★★★</div>
+        <div class="rating-big__count">+1.100 avaliações</div>
+      </div>
+      <div class="rating-bars">
+        <div class="rating-bar-row"><span class="rating-bar-label">5</span><div class="rating-bar-track"><div class="rating-bar-fill" data-pct="95" style="width:0"></div></div><span class="rating-bar-count">1.043</span></div>
+        <div class="rating-bar-row"><span class="rating-bar-label">4</span><div class="rating-bar-track"><div class="rating-bar-fill" data-pct="4" style="width:0"></div></div><span class="rating-bar-count">41</span></div>
+        <div class="rating-bar-row"><span class="rating-bar-label">3</span><div class="rating-bar-track"><div class="rating-bar-fill" data-pct="1" style="width:0"></div></div><span class="rating-bar-count">9</span></div>
+        <div class="rating-bar-row"><span class="rating-bar-label">2</span><div class="rating-bar-track"><div class="rating-bar-fill" data-pct="0" style="width:0"></div></div><span class="rating-bar-count">4</span></div>
+        <div class="rating-bar-row"><span class="rating-bar-label">1</span><div class="rating-bar-track"><div class="rating-bar-fill" data-pct="0" style="width:0"></div></div><span class="rating-bar-count">3</span></div>
+      </div>
+    </div>
+
+    <!-- Review carousel -->
+    <div style="position:relative" data-animate>
+      <div class="rc-wrapper" id="rcWrapper">
+        <div class="rc-track" id="rcTrack">
+
+          <!-- Review 1 — Aline Freitas -->
+          <div class="rc-slide">
+            <div class="rc-card">
+              <div class="rc-photo-col">
+                <img src="./review-aline.jpeg" alt="Aline Freitas"
+                  onerror="this.outerHTML='<div class=\'rc-photo-fallback\'>A</div>'">
+              </div>
+              <div class="rc-content">
+                <div class="rc-header">
+                  <div class="rc-meta">
+                    <div class="rc-name">Aline Freitas</div>
+                    <div class="rc-date">20 mai. 2025</div>
+                    <div class="rc-verified">✓ Compra verificada</div>
+                  </div>
+                  <div class="rc-stars">★★★★★</div>
+                </div>
+                <span class="rc-flavor-tag">🍯 Caramelo Salgado</span>
+                <p class="rc-text">Super recomendo as gummys um sabor surreal! Sem contar com qualidade do produto, com toda certeza irei comprar novamente...</p>
+                <div class="rc-helpful"><span>Útil?</span><button onclick="this.textContent='👍 43'">👍 42</button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Review 2 — Ana Clara -->
+          <div class="rc-slide">
+            <div class="rc-card">
+              <div class="rc-photo-col">
+                <img src="./review-anaclara.jpeg" alt="Ana Clara"
+                  onerror="this.outerHTML='<div class=\'rc-photo-fallback\'>A</div>'">
+              </div>
+              <div class="rc-content">
+                <div class="rc-header">
+                  <div class="rc-meta">
+                    <div class="rc-name">Ana Clara Freitas da Silva</div>
+                    <div class="rc-date">15 mai. 2025</div>
+                    <div class="rc-verified">✓ Compra verificada</div>
+                  </div>
+                  <div class="rc-stars">★★★★★</div>
+                </div>
+                <span class="rc-flavor-tag">🍓 Morango</span>
+                <p class="rc-text">Eu gostei bastante das gummys! Achei muito gostosas principalmente pelo sabor e a praticidade ❤️</p>
+                <div class="rc-helpful"><span>Útil?</span><button onclick="this.textContent='👍 29'">👍 28</button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Review 3 — Yasmin Ferreira -->
+          <div class="rc-slide">
+            <div class="rc-card">
+              <div class="rc-photo-col">
+                <img src="./review-yasmin.jpeg" alt="Yasmin Ferreira"
+                  onerror="this.outerHTML='<div class=\'rc-photo-fallback\'>Y</div>'">
+              </div>
+              <div class="rc-content">
+                <div class="rc-header">
+                  <div class="rc-meta">
+                    <div class="rc-name">Yasmin Ferreira</div>
+                    <div class="rc-date">10 mai. 2025</div>
+                    <div class="rc-verified">✓ Compra verificada</div>
+                  </div>
+                  <div class="rc-stars">★★★★☆</div>
+                </div>
+                <span class="rc-flavor-tag">🍏 Maçã Verde</span>
+                <p class="rc-text">Normalmente suplemento tem aquele gosto artificial forte, mas essas gomas são bem gostosas, parecem até bala mesmo. O sabor é docinho na medida certa e não fica enjoativo! amei ♥️</p>
+                <div class="rc-helpful"><span>Útil?</span><button onclick="this.textContent='👍 38'">👍 37</button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Review 4 — Ciely Camila -->
+          <div class="rc-slide">
+            <div class="rc-card">
+              <div class="rc-photo-col">
+                <img src="./review-ciely.jpeg" alt="Ciely Camila"
+                  onerror="this.outerHTML='<div class=\'rc-photo-fallback\'>C</div>'">
+              </div>
+              <div class="rc-content">
+                <div class="rc-header">
+                  <div class="rc-meta">
+                    <div class="rc-name">Ciely Camila dos Santos Brayner</div>
+                    <div class="rc-date">4 mai. 2025</div>
+                    <div class="rc-verified">✓ Compra verificada</div>
+                  </div>
+                  <div class="rc-stars">★★★★★</div>
+                </div>
+                <span class="rc-flavor-tag">🍓 Frutas Vermelhas</span>
+                <p class="rc-text">Estou usando no dia a dia e gostei bastante pela praticidade, principalmente na correria. Dá vontade de comer como doce, mas ao mesmo tempo ajuda a bater a suplementação. Até agora achei uma das formas mais agradáveis de consumir creatina e proteínaaaa!!! ♥️♥️</p>
+                <div class="rc-helpful"><span>Útil?</span><button onclick="this.textContent='👍 52'">👍 51</button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Review 5 — Miriam Correa -->
+          <div class="rc-slide">
+            <div class="rc-card">
+              <div class="rc-photo-col" style="background:linear-gradient(160deg,#7b3f20,#2a1008);display:flex;align-items:center;justify-content:center">
+                <div class="rc-photo-fallback" style="font-size:72px;font-weight:900;color:rgba(255,255,255,.6)">M</div>
+              </div>
+              <div class="rc-content">
+                <div class="rc-header">
+                  <div class="rc-meta">
+                    <div class="rc-name">Miriam Correa</div>
+                    <div class="rc-date">28 abr. 2025</div>
+                    <div class="rc-verified">✓ Compra verificada</div>
+                  </div>
+                  <div class="rc-stars">★★★★★</div>
+                </div>
+                <span class="rc-flavor-tag">🍯 Caramelo Salgado</span>
+                <p class="rc-text">Quero deixar minha opinião, fiz uso do whey em gummy e também da creatina, além dos sabores muito bons, facilitam muito a correria do dia a dia, bem mais fácil de usar diariamente.</p>
+                <div class="rc-helpful"><span>Útil?</span><button onclick="this.textContent='👍 24'">👍 23</button></div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /rc-track -->
+      </div><!-- /rc-wrapper -->
+
+      <button class="rc-arrow rc-prev" onclick="moveReview(-1)">‹</button>
+      <button class="rc-arrow rc-next" onclick="moveReview(1)">›</button>
+    </div>
+
+    <div class="rc-dots" id="rcDots">
+      <button class="rc-dot active" onclick="goToReview(0)"></button>
+      <button class="rc-dot" onclick="goToReview(1)"></button>
+      <button class="rc-dot" onclick="goToReview(2)"></button>
+      <button class="rc-dot" onclick="goToReview(3)"></button>
+      <button class="rc-dot" onclick="goToReview(4)"></button>
+    </div>
+  </div>
+</section>
+
+<!-- ════ BLOG ════ -->
+<section class="section" id="blog">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-header-left">
+        <span class="eyebrow eyebrow--yellow">📚 CONTEÚDO EDUCATIVO</span>
+        <h2 class="section-title">Fique por <em>dentro</em></h2>
+      </div>
+      <button class="btn btn--outline">Ver todos os artigos →</button>
+    </div>
+
+    <div class="blog-grid">
+      <div class="blog-card" data-animate onclick="openBlogArticle('whey-biodisponibilidade')">
+        <div class="blog-card__thumb" style="background:linear-gradient(135deg,#1a0f05,#3d1f0a)">
+          <span>💪</span>
+        </div>
+        <div class="blog-card__body">
+          <div class="blog-card__cat">Proteína & Músculo</div>
+          <div class="blog-card__title">Por que o Whey Gummy é tão eficiente quanto o whey tradicional?</div>
+          <div class="blog-card__excerpt">Entenda a biodisponibilidade do whey em formato de goma e por que a absorção é comparável ao pó — com a vantagem da praticidade.</div>
+          <div class="blog-card__footer">
+            <span class="blog-card__date">5 jun. 2025</span>
+            <span class="blog-card__read">Ler artigo →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="blog-card" data-animate data-delay="1" onclick="openBlogArticle('creatina-ciencia')">
+        <div class="blog-card__thumb" style="background:linear-gradient(135deg,#06141a,#0d2a3d)">
+          <span>⚡</span>
+        </div>
+        <div class="blog-card__body">
+          <div class="blog-card__cat">Performance</div>
+          <div class="blog-card__title">Creatina: o que a ciência diz sobre o suplemento mais estudado do mundo</div>
+          <div class="blog-card__excerpt">De força a cognição, a creatina é o suplemento com mais evidências científicas de eficácia. Saiba como e quando tomar para maximizar seus resultados.</div>
+          <div class="blog-card__footer">
+            <span class="blog-card__date">28 mai. 2025</span>
+            <span class="blog-card__read">Ler artigo →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="blog-card" data-animate data-delay="2" onclick="openBlogArticle('proteina-sem-cozinhar')">
+        <div class="blog-card__thumb" style="background:linear-gradient(135deg,#0a1a0a,#1a3a1a)">
+          <span>🥗</span>
+        </div>
+        <div class="blog-card__body">
+          <div class="blog-card__cat">Nutrição</div>
+          <div class="blog-card__title">Como atingir sua meta de proteína diária sem cozinhar nada</div>
+          <div class="blog-card__excerpt">Estratégias práticas para quem tem rotina corrida e precisa garantir ingestão proteica adequada ao longo do dia — sem complicação.</div>
+          <div class="blog-card__footer">
+            <span class="blog-card__date">18 mai. 2025</span>
+            <span class="blog-card__read">Ler artigo →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ FOOTER ════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="./logo.svg" alt="Go!Daily" class="footer-logo">
+        <p>Suplementos de alta performance em formatos inovadores. Proteína e creatina do jeito que você vai querer consumir todo dia.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Produtos</h4>
+        <a href="#">Whey Gummy</a><a href="#">Creatina Gummy</a><a href="#">Kit Completo</a><a href="#">Novidades</a>
+      </div>
+      <div class="footer-col">
+        <h4>Empresa</h4>
+        <a href="#">Sobre nós</a><a href="#">Blog</a><a href="#">Imprensa</a><a href="#">Trabalhe conosco</a>
+      </div>
+      <div class="footer-col">
+        <h4>Suporte</h4>
+        <a href="#">FAQ</a><a href="#">Rastrear pedido</a><a href="#">Contato</a><a href="#">Devolução</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Go!Daily. Todos os direitos reservados.</span>
+      <span>Feito com 🍬 no Brasil</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ════ POPUP — SPLIT LAYOUT ════ -->
+<div class="popup-overlay" id="emailPopup">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closePopup()">×</button>
+
+    <!-- Left: person photo -->
+    <div class="popup-photo">
+      <img src="./popup-person.jpeg" alt="Go!Daily"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="popup-photo__fallback" style="display:none;background:linear-gradient(160deg,#2a1a0a,#1a0810)">
+        <div style="font-size:80px;text-align:center">🍬</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.5);text-align:center;line-height:1.5">Suplementos<br>que você vai<br>amar</div>
+      </div>
+      <div class="popup-photo__overlay">
+        <div class="popup-photo__tag">🎁 OFERTA EXCLUSIVA</div>
+        <div class="popup-photo__quote">"Ganhe 10% OFF<br>na sua primeira compra"</div>
+      </div>
+    </div>
+
+    <!-- Right: form -->
+    <div class="popup-form-side">
+      <div class="popup-discount-badge">⚡ 10% de desconto esperando por você</div>
+      <h3>CADASTRE-SE<br><span>e garanta seu desconto</span></h3>
+      <p>Fique por dentro do que rola aqui e ganhe 10% de desconto na primeira compra, além de promoções exclusivas e novidades da Go!Daily.</p>
+
+      <div class="popup-fields">
+        <input type="text" class="popup-input" placeholder="Nome">
+        <input type="email" class="popup-input" placeholder="E-mail">
+        <div class="popup-phone-row">
+          <select class="popup-flag-select"><option>🇧🇷 +55</option><option>🇺🇸 +1</option><option>🇵🇹 +351</option></select>
+          <input type="tel" class="popup-input" placeholder="Telefone">
+        </div>
+        <div>
+          <label class="popup-label">Aniversário</label>
+          <div class="popup-date-row">
+            <input type="text" class="popup-input" placeholder="DD" maxlength="2">
+            <input type="text" class="popup-input" placeholder="MM" maxlength="2">
+            <input type="text" class="popup-input" placeholder="AAAA" maxlength="4">
+          </div>
+        </div>
+        <button class="popup-cta" onclick="submitPopup(this)">Garantir Meu Desconto →</button>
+      </div>
+      <div class="popup-disclaimer">Você pode cancelar a inscrição a qualquer momento.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ CART OVERLAY ════ -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCartDrawer()"></div>
+
+<!-- ════ CART DRAWER ════ -->
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-drawer-header">
+    <div class="cart-drawer-title">🛒 Meu Carrinho <span id="drawerCount" style="font-size:13px;color:var(--muted);font-weight:600"></span></div>
+    <button class="cart-drawer-close" onclick="closeCartDrawer()">×</button>
+  </div>
+  <div class="cart-drawer-body" id="cartDrawerBody">
+    <div class="cart-drawer-empty">
+      <span class="empty-icon">🛒</span>
+      <p>Seu carrinho está vazio.<br>Adicione produtos para continuar.</p>
+      <button class="btn btn--outline" onclick="closeCartDrawer();scrollTo('produtos')">Ver produtos →</button>
+    </div>
+  </div>
+  <div class="cart-drawer-footer" id="cartDrawerFooter" style="display:none">
+    <div class="cart-free-ship" id="cartFreeShipMsg"></div>
+    <div class="cart-subtotal-row">
+      <span class="cart-subtotal-label">Subtotal</span>
+      <span class="cart-subtotal-val" id="drawerSubtotal">R$ 0,00</span>
+    </div>
+    <div class="cart-drawer-btns">
+      <button class="btn btn--outline btn--full" onclick="closeCartDrawer();openCartPage()">Ver carrinho →</button>
+      <button class="btn btn--primary btn--full btn--lg">Finalizar Compra →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ CART PAGE ════ -->
+<div class="cart-page slide-page" id="cartPage">
+  <div class="detail-nav">
+    <button class="detail-back" onclick="closeSlidePage('cartPage')">← Continuar comprando</button>
+    <span style="color:var(--muted);font-size:14px">|</span>
+    <span style="font-size:13px;color:var(--muted)">Carrinho</span>
+  </div>
+  <div class="cart-page-inner">
+    <div>
+      <h1 class="cart-page-title">Meu <em>Carrinho</em></h1>
+      <div class="cart-page-items" id="cartPageItems"></div>
+    </div>
+    <div class="cart-summary">
+      <h3>Resumo do Pedido</h3>
+      <div class="cart-summary-rows">
+        <div class="cart-summary-row"><span>Subtotal</span><span id="pageSubtotal">R$ 0,00</span></div>
+        <div class="cart-summary-row"><span>Frete</span><span id="pageFrete" style="color:#4ade80">Grátis</span></div>
+      </div>
+      <div class="cart-summary-total">
+        <span>Total</span>
+        <span id="pageTotal">R$ 0,00</span>
+      </div>
+      <div class="cart-coupon">
+        <input type="text" placeholder="Cupom de desconto" id="couponInput">
+        <button onclick="applyCoupon()">Aplicar</button>
+      </div>
+      <button class="btn btn--primary btn--full btn--lg">Finalizar Compra →</button>
+      <button class="btn btn--secondary btn--full" style="margin-top:8px" onclick="closeSlidePage('cartPage')">← Continuar comprando</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PRODUCT DETAIL PAGE ════ -->
+<div class="slide-page" id="productDetailPage">
+  <div class="detail-nav">
+    <button class="detail-back" onclick="closeSlidePage('productDetailPage')">← Voltar</button>
+    <span style="color:var(--muted);font-size:14px">|</span>
+    <span style="font-size:13px;color:var(--muted)" id="detailBreadcrumb">Produtos</span>
+  </div>
+  <div class="detail-content">
+    <div class="detail-visual">
+      <div class="detail-visual__main" id="detailMainImgWrap" style="background:var(--surface)">
+        <img id="detailImg" src="" alt="" style="width:80%;height:80%;object-fit:contain">
+      </div>
+      <div class="detail-flavor-thumbs" id="detailThumbs"></div>
+    </div>
+    <div class="detail-info">
+      <span class="badge badge--yellow" id="detailBadge">🔥 -21%</span>
+      <div class="detail-product-name" id="detailName">Whey <span>Gummy</span></div>
+      <div class="detail-flavor-name" id="detailFlavorName">Caramelo Salgado</div>
+      <div class="detail-rating-row">
+        <span class="stars">★★★★★</span>
+        <span id="detailRating">4.9 · 312 avaliações</span>
+      </div>
+      <div class="detail-price-block">
+        <div class="detail-old-price" id="detailOldPrice">De R$ 189,90</div>
+        <div class="detail-price" id="detailPrice">R$ 149,90</div>
+        <div class="detail-installments" id="detailInstallments">ou 3× de R$ 49,97 sem juros</div>
+      </div>
+      <div class="detail-attrs" id="detailAttrs"></div>
+      <div class="detail-flavor-label">Escolha o sabor</div>
+      <div class="detail-flavors" id="detailFlavors"></div>
+      <div class="detail-qty">
+        <span class="qty-label">Quantidade</span>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <span class="qty-val" id="qtyVal">1</span>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+      </div>
+      <div class="detail-actions">
+        <button class="btn btn--primary btn--full btn--lg" id="addToCartBtn" onclick="addToCart()">Adicionar ao carrinho 🛒</button>
+        <button class="btn btn--secondary btn--full btn--lg">Comprar agora →</button>
+      </div>
+      <div class="detail-accordion">
+        <div class="accordion-item">
+          <button class="accordion-btn" onclick="toggleAccordion(this)">Modo de uso e conservação <span class="accordion-chevron">▾</span></button>
+          <div class="accordion-body">Consuma de 4 a 8 balas ao dia ou conforme orientação profissional. Conservar em local fresco, seco e ao abrigo da luz. Consumir em 30 dias após aberto. Manter até 30°C.</div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-btn" onclick="toggleAccordion(this)">Informação nutricional completa <span class="accordion-chevron">▾</span></button>
+          <div class="accordion-body" id="detailNutrition">
+            <strong>Porções:</strong> 40 · <strong>Porção:</strong> 20g (4 gomas)<br><br>
+            Energia: 56kcal | Carboidratos: 4,8g | Açúcares: 0g | Proteínas: 12g | Fibras: 0,5g<br><br>
+            Ingredientes: Proteína do Soro do Leite (Whey), Gelatina, Aromatizante artificial, Corante, Edulcorante Sucralose.
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-btn" onclick="toggleAccordion(this)">Política de devolução <span class="accordion-chevron">▾</span></button>
+          <div class="accordion-body">Devolução em até 30 dias após recebimento, desde que o produto esteja lacrado e em perfeitas condições. Entre em contato pelo SAC para iniciar o processo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ BLOG ARTICLE PAGE ════ -->
+<div class="blog-article-page slide-page" id="blogArticlePage">
+  <div class="detail-nav">
+    <button class="detail-back" onclick="closeSlidePage('blogArticlePage')">← Voltar ao Blog</button>
+    <span style="color:var(--muted);font-size:14px">|</span>
+    <span style="font-size:13px;color:var(--muted)" id="articleBreadcrumb">Blog</span>
+  </div>
+  <div id="articleContent"></div>
+</div>
+
+<!-- SCROLL TOP -->
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- ════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════ -->
+<script>
+// ═══ DATA ═══
+const WHEY_FLAVORS = [
+  {id:'whey-caramelo',label:'Caramelo Salgado',emoji:'🍯',img:'./bottle-caramelo.png',fallbackImg:'./gummy-whey-caramelo-salgado.png',price:'R$ 149,90',priceNum:149.90,oldPrice:'R$ 189,90',install:'3× de R$ 49,97',rating:'4.9',reviews:'312',badge:'🔥 -21%',badgeClass:'badge--yellow'},
+  {id:'whey-morango',label:'Morango',emoji:'🍓',img:'./bottle-morango.png',fallbackImg:'./gummy-whey-morango.png',price:'R$ 149,90',priceNum:149.90,oldPrice:null,install:'3× de R$ 49,97',rating:'4.8',reviews:'94',badge:'🆕 NOVO',badgeClass:'badge--orange'},
+];
+const CREATINA_FLAVORS = [
+  {id:'creatina-frutas',label:'Frutas Vermelhas',emoji:'🍓',img:'./bottle-creatina-frutas.png',fallbackImg:null,price:'R$ 129,90',priceNum:129.90,oldPrice:null,install:'3× de R$ 43,30',rating:'4.8',reviews:'45',badge:'💎 NOVO',badgeClass:'badge--accent'},
+  {id:'creatina-maca',label:'Maçã Verde',emoji:'🍏',img:'./bottle-creatina-maca.png',fallbackImg:null,price:'R$ 129,90',priceNum:129.90,oldPrice:null,install:'3× de R$ 43,30',rating:'4.9',reviews:'38',badge:'💎 NOVO',badgeClass:'badge--accent'},
+];
+
+const BLOG_ARTICLES = {
+  'whey-biodisponibilidade': {
+    cat:'Proteína & Músculo',
+    title:'Por que o Whey Gummy é tão eficiente quanto o whey tradicional?',
+    date:'5 jun. 2025',
+    readTime:'5 min de leitura',
+    content:`
+      <div class="article-hero">
+        <div class="container">
+          <div class="article-cat">Proteína & Músculo</div>
+          <h1 class="article-title">Por que o Whey Gummy é tão eficiente quanto o whey tradicional?</h1>
+          <div class="article-meta">
+            <span>📅 5 jun. 2025</span><span>⏱ 5 min de leitura</span><span>🍬 Go!Daily Blog</span>
+          </div>
+        </div>
+      </div>
+      <div class="article-body">
+        <p>Quando falamos em proteína do soro do leite — o famoso <strong>whey protein</strong> — a maioria das pessoas imagina um shake misturado em shakeres, consumido às pressas depois do treino. Mas e se a proteína viesse em forma de bala de gelatina? Seria tão eficiente?</p>
+        <p>A resposta, respaldada pela ciência, é: <strong>sim</strong>. E vamos te explicar exatamente o porquê.</p>
+
+        <h2>O que determina a eficiência de um whey?</h2>
+        <p>A eficiência do whey protein está ligada a três fatores principais: a qualidade da proteína, a biodisponibilidade (capacidade do organismo de absorver e utilizar a proteína) e o timing de consumo. A boa notícia é que o Whey Gummy Go!Daily não compromete nenhum desses fatores.</p>
+
+        <div class="article-highlight">
+          <p>💡 <strong>Biodisponibilidade</strong> é a fração de uma substância que, após a administração, atinge a circulação sistêmica sem alterações — quanto maior, melhor o aproveitamento pelo organismo.</p>
+        </div>
+
+        <h2>A proteína é a mesma</h2>
+        <p>O Whey Gummy Go!Daily utiliza <strong>proteína isolada do soro do leite (Whey Protein Isolate)</strong> como matéria-prima — a mesma encontrada nos melhores pós do mercado. O processo de fabricação das gomas envolve temperaturas controladas que preservam o perfil de aminoácidos essenciais, incluindo os BCAAs (leucina, isoleucina e valina).</p>
+
+        <h3>O que a pesquisa diz sobre a absorção proteica</h3>
+        <p>Estudos demonstram que o organismo humano consegue absorver proteínas em diferentes formatos com eficiência comparável, desde que a qualidade da proteína seja mantida. O fator limitante é a digestão — e as gomas de gelatina são altamente digeríveis.</p>
+
+        <h2>A vantagem prática do formato gummy</h2>
+        <p>Além da eficiência proteica, o formato goma traz benefícios únicos:</p>
+        <ul>
+          <li><strong>Sem preparo:</strong> Não precisa de shaker, água ou colher dosadora</li>
+          <li><strong>Portabilidade total:</strong> Leve no bolso, na bolsa, no carro</li>
+          <li><strong>Consistência no consumo:</strong> Mais fácil de consumir regularmente quando é gostoso</li>
+          <li><strong>Sem desperdício:</strong> Dosagem exata por porção (4 balas = 12g proteína)</li>
+        </ul>
+
+        <h2>12g de proteína em 4 balas</h2>
+        <p>Cada porção de 4 balas Go!Daily entrega <strong>12g de proteína</strong>, com apenas 4,8g de carboidratos e zero açúcar adicionado. Para quem busca suplementação prática e eficiente, esse perfil nutricional é excelente.</p>
+
+        <div class="article-highlight">
+          <p>🏋️ A recomendação geral para ganho muscular é de 1,6 a 2,2g de proteína por kg de peso corporal ao dia. Uma pessoa de 70kg precisaria de ~112-154g — o Whey Gummy pode contribuir com 12g de forma simples e saborosa.</p>
+        </div>
+
+        <h2>Conclusão</h2>
+        <p>O Whey Gummy Go!Daily é uma alternativa real e eficiente ao whey em pó tradicional. Com a mesma qualidade de proteína, uma biodisponibilidade comparável e muito mais praticidade, é o suplemento ideal para quem não abre mão dos resultados, mas precisa de conveniência no dia a dia.</p>
+
+        <div class="article-cta">
+          <h3>Experimente o Whey Gummy 🍬</h3>
+          <p>4 sabores incríveis, 12g de proteína por porção, zero açúcar e entrega rápida para todo o Brasil.</p>
+          <button class="btn btn--primary btn--lg" onclick="closeSlidePage('blogArticlePage');showProducts('whey');scrollTo('produtos')">Ver todos os sabores →</button>
+        </div>
+      </div>
+    `
+  },
+  'creatina-ciencia': {
+    cat:'Performance',
+    title:'Creatina: o que a ciência diz sobre o suplemento mais estudado do mundo',
+    date:'28 mai. 2025',
+    readTime:'7 min de leitura',
+    content:`
+      <div class="article-hero">
+        <div class="container">
+          <div class="article-cat">Performance</div>
+          <h1 class="article-title">Creatina: o que a ciência diz sobre o suplemento mais estudado do mundo</h1>
+          <div class="article-meta">
+            <span>📅 28 mai. 2025</span><span>⏱ 7 min de leitura</span><span>🍬 Go!Daily Blog</span>
+          </div>
+        </div>
+      </div>
+      <div class="article-body">
+        <p>A creatina é, sem exagero, o <strong>suplemento mais estudado da história da nutrição esportiva</strong>. Com mais de 500 estudos clínicos publicados e décadas de pesquisa, ela ocupa uma posição única: é segura, eficaz e acessível. Mas o que exatamente a ciência prova sobre a creatina?</p>
+
+        <h2>O que é a creatina?</h2>
+        <p>A creatina é um composto produzido naturalmente pelo organismo (fígado, rins e pâncreas) a partir dos aminoácidos arginina, glicina e metionina. Ela é encontrada em pequenas quantidades em alimentos como carne vermelha e peixe, mas a suplementação permite saturar os estoques musculares de forma muito mais eficiente.</p>
+
+        <div class="article-highlight">
+          <p>⚡ Cerca de 95% da creatina do corpo está armazenada nos músculos esqueléticos — e é exatamente aí que ela faz a diferença no desempenho.</p>
+        </div>
+
+        <h2>Como a creatina age no músculo?</h2>
+        <p>Durante exercícios de alta intensidade e curta duração (sprints, levantamento de peso, saltos), o músculo utiliza ATP (adenosina trifosfato) como combustível. O ATP é regenerado rapidamente pelo sistema fosfagênio — e é aí que a creatina entra.</p>
+        <p>A creatina fosforilada (fosfocreatina) doa um grupo fosfato para o ADP, regenerando ATP mais rapidamente. O resultado: <strong>mais energia disponível nos primeiros segundos de esforço máximo</strong>.</p>
+
+        <h2>O que os estudos comprovam</h2>
+        <p>Meta-análises e revisões sistemáticas demonstram que a suplementação de creatina:</p>
+        <ul>
+          <li>Aumenta a força máxima em 5-15% em média</li>
+          <li>Melhora a potência muscular em exercícios de alta intensidade</li>
+          <li>Acelera a recuperação muscular entre séries e sessões</li>
+          <li>Pode aumentar a massa muscular quando combinada com treino de resistência</li>
+          <li>Apresenta benefícios cognitivos, especialmente em situações de privação de sono ou estresse</li>
+        </ul>
+
+        <h3>É segura para uso prolongado?</h3>
+        <p>Sim. Estudos com duração de até 5 anos não encontraram efeitos adversos em indivíduos saudáveis. A retenção hídrica leve observada nos primeiros dias é um efeito esperado — a creatina aumenta o conteúdo de água intramuscular, o que é benéfico para a função celular.</p>
+
+        <h2>A dose ideal</h2>
+        <p>A dose de manutenção recomendada pela literatura científica é de <strong>3-5g por dia</strong>, consumida de forma consistente. A fase de carga (20g/dia por 5-7 dias) é opcional — apenas antecipa a saturação muscular, não aumenta os benefícios finais.</p>
+
+        <p>A Creatina Gummy Go!Daily entrega <strong>3g por porção</strong> — a dose exata recomendada para a maioria das pessoas.</p>
+
+        <h2>Por que escolher Creatina Gummy?</h2>
+        <p>A creatina em pó pode ser difícil de dissolver, tem sabor desagradável e requer preparo. A Creatina Gummy Go!Daily resolve todos esses problemas: é saborosa, prática e entrega a dose correta de creatina monohidratada — a forma mais estudada e eficaz disponível.</p>
+
+        <div class="article-cta">
+          <h3>Creatina Gummy Go!Daily 💎</h3>
+          <p>3g de creatina monohidratada por porção, sabores incríveis e biodisponibilidade máxima.</p>
+          <button class="btn btn--primary btn--lg" onclick="closeSlidePage('blogArticlePage');showProducts('creatina');scrollTo('produtos')">Conhecer Creatina Gummy →</button>
+        </div>
+      </div>
+    `
+  },
+  'proteina-sem-cozinhar': {
+    cat:'Nutrição',
+    title:'Como atingir sua meta de proteína diária sem cozinhar nada',
+    date:'18 mai. 2025',
+    readTime:'4 min de leitura',
+    content:`
+      <div class="article-hero">
+        <div class="container">
+          <div class="article-cat">Nutrição</div>
+          <h1 class="article-title">Como atingir sua meta de proteína diária sem cozinhar nada</h1>
+          <div class="article-meta">
+            <span>📅 18 mai. 2025</span><span>⏱ 4 min de leitura</span><span>🍬 Go!Daily Blog</span>
+          </div>
+        </div>
+      </div>
+      <div class="article-body">
+        <p>Um dos maiores desafios de quem busca melhorar a composição corporal é <strong>atingir a meta diária de proteína</strong>. A rotina corrida, as refeições fora de casa e a falta de tempo para cozinhar tornam esse objetivo ainda mais difícil — mas não impossível.</p>
+        <p>A boa notícia: com as escolhas certas, você consegue bater sua meta proteica sem cozinhar uma única vez.</p>
+
+        <h2>Qual é a meta ideal?</h2>
+        <p>Para ganho de massa muscular e manutenção da composição corporal, as diretrizes de nutrição esportiva recomendam <strong>1,6 a 2,2g de proteína por kg de peso corporal</strong> por dia. Para uma pessoa de 70kg, isso significa entre 112g e 154g de proteína diária.</p>
+
+        <div class="article-highlight">
+          <p>📊 A maioria das pessoas consome menos de 80g de proteína por dia — significativamente abaixo do ideal para objetivos de desempenho ou estética corporal.</p>
+        </div>
+
+        <h2>Fontes de proteína sem preparo</h2>
+        <p>Aqui estão as melhores opções de proteína que não precisam de cozinha:</p>
+
+        <h3>1. Whey Gummy Go!Daily 🍬</h3>
+        <p>A fonte mais prática de todas: 12g de proteína em 4 balas. Leve no bolso, consuma em qualquer lugar. Perfeito antes do treino, como lanche da tarde ou sempre que precisar reforçar a ingestão.</p>
+
+        <h3>2. Iogurte grego natural</h3>
+        <p>Um pote de 170g entrega em média 17g de proteína. Combine com frutas e nozes para um lanche completo.</p>
+
+        <h3>3. Ovos cozidos</h3>
+        <p>Sim, cozinhar ovos conta! Mas você pode cozinhar vários de uma vez e guardar na geladeira para a semana. Cada ovo tem ~6g de proteína.</p>
+
+        <h3>4. Atum em lata</h3>
+        <p>Uma lata de atum em água (120g) fornece ~26g de proteína. Sirva com torradas ou salada pré-lavada — sem cozinhar nada.</p>
+
+        <h3>5. Queijo cottage</h3>
+        <p>100g de cottage entregam ~11g de proteína com pouquíssima gordura. Combina com frutas, tomate ou pão integral.</p>
+
+        <h2>Montando seu dia proteico sem fogão</h2>
+        <p>Exemplo de distribuição para 140g/dia de proteína:</p>
+        <ul>
+          <li><strong>Manhã:</strong> Iogurte grego (17g) + 2 ovos cozidos pré-preparados (12g)</li>
+          <li><strong>Pré-treino:</strong> Whey Gummy Go!Daily (12g)</li>
+          <li><strong>Almoço:</strong> Atum em lata (26g) com salada</li>
+          <li><strong>Lanche:</strong> Cottage (11g) com frutas</li>
+          <li><strong>Jantar:</strong> Peito de frango assado do mercado (35g)</li>
+          <li><strong>Total: ~113g</strong> — adicione outra porção de Whey Gummy para fechar 125g+</li>
+        </ul>
+
+        <h2>A chave: consistência</h2>
+        <p>O segredo não é a refeição perfeita — é a consistência ao longo dos dias e semanas. Ter opções práticas e gostosas como o Whey Gummy Go!Daily elimina a principal barreira: a falta de conveniência.</p>
+
+        <div class="article-cta">
+          <h3>Sua proteína mais prática 🍬</h3>
+          <p>12g de proteína em 4 balas. Zero preparo, zero desculpa. Experimente os 4 sabores Go!Daily.</p>
+          <button class="btn btn--primary btn--lg" onclick="closeSlidePage('blogArticlePage');showProducts('whey');scrollTo('produtos')">Escolher meu sabor →</button>
+        </div>
+      </div>
+    `
+  }
+};
+
+// ═══ STATE ═══
+let currentProduct = null;
+let currentFlavor = null;
+let qty = 1;
+let cart = []; // [{id, lineName, flavor, emoji, img, price, priceNum, qty}]
+
+function cartTotal(){ return cart.reduce((s,i) => s + i.priceNum * i.qty, 0); }
+function cartTotalCount(){ return cart.reduce((s,i) => s + i.qty, 0); }
+function fmtPrice(n){ return 'R$ ' + n.toFixed(2).replace('.',','); }
+
+function updateCartBadge(){
+  const total = cartTotalCount();
+  const b = document.getElementById('cartBadge');
+  if(total > 0){ b.style.display='flex'; b.textContent=total; } else { b.style.display='none'; }
+}
+
+// ─── CART DRAWER ───
+function openCartDrawer(){
+  renderCartDrawer();
+  document.getElementById('cartDrawer').classList.add('open');
+  document.getElementById('cartOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCartDrawer(){
+  document.getElementById('cartDrawer').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function renderCartDrawer(){
+  const body = document.getElementById('cartDrawerBody');
+  const footer = document.getElementById('cartDrawerFooter');
+  const count = document.getElementById('drawerCount');
+  const total = cartTotalCount();
+  count.textContent = total > 0 ? `(${total})` : '';
+  if(cart.length === 0){
+    body.innerHTML = `<div class="cart-drawer-empty"><span class="empty-icon">🛒</span><p>Seu carrinho está vazio.<br>Adicione produtos para continuar.</p><button class="btn btn--outline" onclick="closeCartDrawer();scrollTo('produtos')">Ver produtos →</button></div>`;
+    footer.style.display = 'none';
+    return;
+  }
+  footer.style.display = '';
+  // Free shipping message
+  const sub = cartTotal();
+  const remaining = 199 - sub;
+  const freeMsg = document.getElementById('cartFreeShipMsg');
+  if(remaining > 0) freeMsg.innerHTML = `Faltam <span>${fmtPrice(remaining)}</span> para frete grátis!`;
+  else freeMsg.innerHTML = `<span>🎉 Você ganhou frete grátis!</span>`;
+  document.getElementById('drawerSubtotal').textContent = fmtPrice(sub);
+  body.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item__img">
+        <img src="${item.img}" alt="${item.flavor}" onerror="this.outerHTML='<span style=\\'font-size:32px\\'>${item.emoji}</span>'">
+      </div>
+      <div class="cart-item__info">
+        <div class="cart-item__line">${item.lineName}</div>
+        <div class="cart-item__name">Go!Daily</div>
+        <div class="cart-item__flavor">${item.emoji} ${item.flavor}</div>
+        <div class="cart-item__price">${fmtPrice(item.priceNum * item.qty)}</div>
+        <div class="cart-item__actions">
+          <div class="cart-qty">
+            <button class="cart-qty-btn" onclick="updateCartQty('${item.id}',-1)">−</button>
+            <span class="cart-qty-val">${item.qty}</span>
+            <button class="cart-qty-btn" onclick="updateCartQty('${item.id}',1)">+</button>
+          </div>
+          <button class="cart-remove" onclick="removeFromCart('${item.id}')">✕ Remover</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function addToCartItem(item){
+  const existing = cart.find(i => i.id === item.id);
+  if(existing) existing.qty += item.qty;
+  else cart.push({...item});
+  updateCartBadge();
+}
+function removeFromCart(id){
+  cart = cart.filter(i => i.id !== id);
+  updateCartBadge();
+  renderCartDrawer();
+  if(document.getElementById('cartPage').classList.contains('active')) renderCartPage();
+}
+function updateCartQty(id, delta){
+  const item = cart.find(i => i.id === id);
+  if(!item) return;
+  item.qty = Math.max(1, item.qty + delta);
+  updateCartBadge();
+  renderCartDrawer();
+  if(document.getElementById('cartPage').classList.contains('active')) renderCartPage();
+}
+
+// ─── CART PAGE ───
+function openCartPage(){
+  renderCartPage();
+  document.getElementById('cartPage').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function renderCartPage(){
+  const items = document.getElementById('cartPageItems');
+  if(cart.length === 0){
+    items.innerHTML = `<div style="padding:48px 0;text-align:center;color:var(--muted)"><div style="font-size:48px;margin-bottom:16px">🛒</div><p>Seu carrinho está vazio.</p><button class="btn btn--outline" style="margin-top:20px" onclick="closeSlidePage('cartPage');scrollTo('produtos')">Ver produtos →</button></div>`;
+  } else {
+    items.innerHTML = cart.map(item => `
+      <div class="cart-page-item">
+        <div class="cart-page-item__img">
+          <img src="${item.img}" alt="${item.flavor}" onerror="this.outerHTML='<span style=\\'font-size:40px\\'>${item.emoji}</span>'">
+        </div>
+        <div class="cart-page-item__info">
+          <div class="cart-page-item__line">${item.lineName}</div>
+          <div class="cart-page-item__name">Go!Daily</div>
+          <div class="cart-page-item__flavor">${item.emoji} ${item.flavor}</div>
+          <div class="cart-page-item__qty">
+            <button class="cart-page-item__qty-btn" onclick="updateCartQty('${item.id}',-1)">−</button>
+            <span class="cart-page-item__qty-val">${item.qty}</span>
+            <button class="cart-page-item__qty-btn" onclick="updateCartQty('${item.id}',1)">+</button>
+          </div>
+        </div>
+        <div class="cart-page-item__price">${fmtPrice(item.priceNum * item.qty)}</div>
+        <button class="cart-page-item__remove" onclick="removeFromCart('${item.id}')" title="Remover">✕</button>
+      </div>`).join('');
+  }
+  const sub = cartTotal();
+  const frete = sub >= 199 ? 'Grátis' : fmtPrice(20);
+  const total = sub >= 199 ? sub : sub + 20;
+  document.getElementById('pageSubtotal').textContent = fmtPrice(sub);
+  document.getElementById('pageFrete').textContent = frete;
+  document.getElementById('pageFrete').style.color = sub >= 199 ? '#4ade80' : '';
+  document.getElementById('pageTotal').textContent = fmtPrice(total);
+}
+function applyCoupon(){
+  const val = document.getElementById('couponInput').value.trim().toUpperCase();
+  if(val === 'GODAILY10'){ alert('✓ Cupom aplicado: 10% de desconto!'); }
+  else { alert('Cupom inválido ou expirado.'); }
+}
+
+// ─── ADD TO CART (from product detail) ───
+function addToCart(){
+  if(!currentFlavor) return;
+  const isWhey = currentProduct.isWhey;
+  addToCartItem({
+    id: currentFlavor.id,
+    lineName: isWhey ? 'Whey Gummy' : 'Creatina Gummy',
+    flavor: currentFlavor.label,
+    emoji: currentFlavor.emoji,
+    img: currentFlavor.img || currentFlavor.fallbackImg || '',
+    price: currentFlavor.price,
+    priceNum: currentFlavor.priceNum,
+    qty
+  });
+  const btn = document.getElementById('addToCartBtn');
+  const orig = btn.textContent;
+  btn.textContent = '✓ Adicionado!';
+  btn.style.background = '#4ade80'; btn.style.color = '#0a1a0a';
+  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; btn.style.color = ''; }, 1600);
+  setTimeout(() => { closeSlidePage('productDetailPage'); openCartDrawer(); }, 800);
+}
+
+// ═══ CAROUSEL ═══
+let currentSlide = 0;
+const totalSlides = 3;
+let autoSlide;
+
+function goToSlide(idx){
+  currentSlide = idx;
+  document.getElementById('carouselTrack').style.transform = `translateX(-${idx*100}%)`;
+  document.querySelectorAll('.cdot').forEach((d,i) => d.classList.toggle('active', i===idx));
+}
+function moveCarousel(dir){
+  goToSlide((currentSlide + dir + totalSlides) % totalSlides);
+  resetAuto();
+}
+function resetAuto(){clearInterval(autoSlide); autoSlide = setInterval(() => moveCarousel(1), 5500)}
+resetAuto();
+
+// ═══ HEADER SCROLL ═══
+const header = document.getElementById('siteHeader');
+const annHeight = document.querySelector('.announcement').offsetHeight;
+window.addEventListener('scroll', () => {
+  header.classList.toggle('scrolled', window.scrollY > 80);
+  header.style.top = window.scrollY > 80 ? '0' : annHeight + 'px';
+  document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 400);
+});
+header.style.top = annHeight + 'px';
+
+function scrollTo(id){
+  const el = document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth'});
+}
+function closeDropdowns(){/* hover-based — no action needed */}
+
+// ═══ INTERSECTION OBSERVER ═══
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      e.target.querySelectorAll('.rating-bar-fill').forEach(b => b.style.width = b.dataset.pct + '%');
+    }
+  });
+}, {threshold:0.12});
+document.querySelectorAll('[data-animate]').forEach(el => obs.observe(el));
+
+// ═══ PRODUCT TABS (noop — kept for blog article CTA buttons) ═══
+function showProducts(tab){ /* all products always visible — no-op */ }
+
+// ═══ REVIEW CAROUSEL ═══
+let rcCurrent = 0;
+const RC_TOTAL = 5;
+let rcAuto;
+
+function goToReview(idx){
+  rcCurrent = idx;
+  document.getElementById('rcTrack').style.transform = `translateX(-${idx*100}%)`;
+  document.querySelectorAll('.rc-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
+}
+function moveReview(dir){
+  goToReview((rcCurrent + dir + RC_TOTAL) % RC_TOTAL);
+  resetRcAuto();
+}
+function resetRcAuto(){
+  clearInterval(rcAuto);
+  rcAuto = setInterval(() => moveReview(1), 5000);
+}
+resetRcAuto();
+
+// Pause auto-advance on hover
+document.addEventListener('DOMContentLoaded', () => {
+  const wrapper = document.getElementById('rcWrapper');
+  if(wrapper){
+    wrapper.addEventListener('mouseenter', () => clearInterval(rcAuto));
+    wrapper.addEventListener('mouseleave', resetRcAuto);
+  }
+});
+
+// ═══ POPUP ═══
+setTimeout(() => document.getElementById('emailPopup').classList.add('active'), 2500);
+document.getElementById('emailPopup').addEventListener('click', e => { if(e.target.id==='emailPopup') closePopup(); });
+function closePopup(){ document.getElementById('emailPopup').classList.remove('active'); }
+function submitPopup(btn){
+  btn.textContent = '✓ Cadastrado! Seu cupom chegará em breve.';
+  btn.disabled = true; btn.style.opacity = '.7';
+  setTimeout(closePopup, 2200);
+}
+
+// ═══ PRODUCT DETAIL ═══
+function openProductDetail(productId){
+  const isWhey = productId.startsWith('whey');
+  const flavors = isWhey ? WHEY_FLAVORS : CREATINA_FLAVORS;
+  const flavor = flavors.find(f => f.id === productId) || flavors[0];
+  currentProduct = {flavors, isWhey};
+  currentFlavor = flavor;
+  qty = 1;
+  document.getElementById('qtyVal').textContent = 1;
+  renderDetail(flavor, flavors, isWhey);
+  openSlidePage('productDetailPage');
+}
+
+function renderDetail(flavor, flavors, isWhey){
+  document.getElementById('detailName').innerHTML = isWhey ? 'Whey <span>Gummy</span>' : 'Creatina <span>Gummy</span>';
+  document.getElementById('detailFlavorName').textContent = flavor.emoji + ' ' + flavor.label;
+  document.getElementById('detailBreadcrumb').textContent = `${isWhey?'Whey':'Creatina'} Gummy — ${flavor.label}`;
+  document.getElementById('detailRating').textContent = `${flavor.rating} · ${flavor.reviews} avaliações`;
+  document.getElementById('detailPrice').textContent = flavor.price;
+  const op = document.getElementById('detailOldPrice');
+  op.style.display = flavor.oldPrice ? '' : 'none';
+  if(flavor.oldPrice) op.textContent = 'De ' + flavor.oldPrice;
+  document.getElementById('detailInstallments').textContent = 'ou ' + flavor.install + ' sem juros';
+  const badge = document.getElementById('detailBadge');
+  badge.textContent = flavor.badge;
+  badge.className = 'badge ' + flavor.badgeClass;
+
+  // Image with fallback
+  const wrap = document.getElementById('detailMainImgWrap');
+  const imgSrc = flavor.img || (flavor.fallbackImg || '');
+  wrap.innerHTML = `<img src="${imgSrc}" alt="${flavor.label}" style="width:80%;height:80%;object-fit:contain" onerror="this.outerHTML='<div style=\\'font-size:100px;text-align:center\\'>${flavor.emoji}</div>'">`;
+
+  // Attrs
+  const attrs = isWhey
+    ? ['💪 12g Proteína','🌾 Zero Glúten','🍬 Zero Açúcar','📦 800g · 40 porções']
+    : ['⚡ 3g Creatina','🔬 Alta biodisponibilidade','💧 Zero açúcar','📦 300g · 30 porções'];
+  document.getElementById('detailAttrs').innerHTML = attrs.map(a => `<span class="attr-pill">${a}</span>`).join('');
+
+  // Flavor pills
+  document.getElementById('detailFlavors').innerHTML = flavors.map(f =>
+    `<button class="detail-flavor-option${f.id===flavor.id?' active':''}" onclick="selectFlavor('${f.id}')">${f.emoji} ${f.label}</button>`
+  ).join('');
+
+  // Thumbs
+  document.getElementById('detailThumbs').innerHTML = flavors.map(f => `
+    <div class="detail-thumb${f.id===flavor.id?' active':''}" onclick="selectFlavor('${f.id}')">
+      ${f.img ? `<img src="${f.img}" alt="${f.label}" onerror="this.outerHTML='<span style=\\'font-size:24px\\'>${f.emoji}</span>'">` : `<span style="font-size:24px">${f.emoji}</span>`}
+    </div>`
+  ).join('');
+
+  // Nutrition for creatina
+  if(!isWhey){
+    document.getElementById('detailNutrition').innerHTML = `
+      <strong>Porções:</strong> 30 · <strong>Porção:</strong> 10g (2 gomas)<br><br>
+      Energia: 28kcal | Carboidratos: 5,2g | Açúcares: 0g | Creatina Monohidratada: 3g | Fibras: 0,2g<br><br>
+      Ingredientes: Creatina Monohidratada, Gelatina, Aromatizante artificial, Corante, Edulcorante Sucralose.`;
+  } else {
+    document.getElementById('detailNutrition').innerHTML = `
+      <strong>Porções:</strong> 40 · <strong>Porção:</strong> 20g (4 gomas)<br><br>
+      Energia: 56kcal | Carboidratos: 4,8g | Açúcares: 0g | Proteínas: 12g | Fibras: 0,5g<br><br>
+      Ingredientes: Proteína do Soro do Leite (Whey), Gelatina, Aromatizante artificial, Corante, Edulcorante Sucralose.`;
+  }
+}
+
+function selectFlavor(id){
+  const {flavors, isWhey} = currentProduct;
+  const flavor = flavors.find(f => f.id === id);
+  if(!flavor) return;
+  currentFlavor = flavor;
+  renderDetail(flavor, flavors, isWhey);
+}
+
+function changeQty(delta){
+  qty = Math.max(1, qty + delta);
+  document.getElementById('qtyVal').textContent = qty;
+}
+
+// ═══ SLIDE PAGES (product detail + blog) ═══
+function openSlidePage(id){
+  document.getElementById(id).classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeSlidePage(id){
+  document.getElementById(id).classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// ═══ BLOG ARTICLES ═══
+function openBlogArticle(articleId){
+  const article = BLOG_ARTICLES[articleId];
+  if(!article) return;
+  document.getElementById('articleBreadcrumb').textContent = 'Blog / ' + article.cat;
+  document.getElementById('articleContent').innerHTML = article.content;
+  openSlidePage('blogArticlePage');
+}
+
+// ═══ ACCORDION ═══
+function toggleAccordion(btn){ btn.parentElement.classList.toggle('open'); }
+
+// ═══ KEYBOARD ═══
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){
+    ['blogArticlePage','productDetailPage','cartPage'].forEach(id => {
+      if(document.getElementById(id).classList.contains('active')) closeSlidePage(id);
+    });
+    closeCartDrawer();
+    closePopup();
+  }
+  if(!document.querySelector('.slide-page.active') && !document.getElementById('cartDrawer').classList.contains('open')){
+    if(e.key === 'ArrowLeft') moveCarousel(-1);
+    if(e.key === 'ArrowRight') moveCarousel(1);
+  }
+});
+</script>
+</body>
+</html>
